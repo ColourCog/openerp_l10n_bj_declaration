@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>            
+
+        <report 
+            auto="False"
+            id="declaration_report_cnss"
+            model="declaration.report"
+            name="declaration.report.cnss"
+            rml="hr_loan/report/declaration_report_cnss.rml"
+            string="CNSS Report" 
+            usage="default"
+            attachment_use="False"
+            />
+
+        <report 
+            auto="False"
+            id="declaration_report_ipts"
+            model="declaration.report"
+            name="declaration.report.ipts"
+            rml="hr_loan/report/declaration_report_ipts.rml"
+            string="DGCTP Report" 
+            usage="default"
+            attachment_use="False"
+            />
+
+    </data>
+</openerp>

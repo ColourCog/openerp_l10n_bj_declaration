@@ -1,0 +1,287 @@
+#-*- coding:utf-8 -*-
+import time
+from datetime import datetime
+from dateutil import relativedelta
+from openerp.osv import fields, osv
+from openerp.tools.translate import _
+import openerp.addons.decimal_precision as dp
+
+class declaration_report_line(osv.osv):
+    _name = 'declaration.report.line'
+    _columns = {
+        'declaration_id': fields.many2one('declaration.report', 'Declaration', ondelete='cascade'),
+        'employee_id' : fields.many2one('hr.employee', 'Employee'), 
+        'name' : fields.char('Name', size=254), 
+        'account_id': fields.many2one('account.account', 'Debit Account'),
+        'gross' : fields.float('Gross', digits_compute=dp.get_precision('Account')), 
+        'total' : fields.float('Amount', digits_compute=dp.get_precision('Account')), 
+        
+    }
+declaration_report_line()
+
+
+class declaration_report(osv.osv):
+    _name = 'declaration.report'
+    _inherit = ['mail.thread', 'ir.needaction_mixin'] 
+    _description = 'Benin Payroll Declaration' 
+    _track = {
+        'state': {
+          'declaration_report.mt_declaration_transferred': lambda self, cr, uid, obj, ctx=None: obj['state'] == 'transferred',
+          'declaration_report.mt_declaration_waiting': lambda self, cr, uid, obj, ctx=None: obj['state'] == 'waiting',
+          'declaration_report.mt_declaration_paid': lambda self, cr, uid, obj, ctx=None: obj['state'] == 'paid',
+        },
+    }
+
+    def _get_currency(self, cr, uid, context=None):
+        res = False
+        cur_obj = self.pool.get('res.currency')
+        currency_ids = cur_obj.search(cr, uid, [("name","=","XOF")], context=context)
+        return currency_ids[0]
+
+    _columns = {
+        'name' : fields.char('Name', size=64, select=True, readonly=True), 
+        'partner_id': fields.related('prep_id', 'partner_id', type='many2one', string='Due to', relation='res.partner', readonly=True),
+        'prep_id': fields.many2one('declaration.prep', 'Settings', required=True),
+        'line_ids':fields.one2many('declaration.report.line', 'declaration_id', 'Payslip Lines'),
+        'format': fields.related('prep_id', 'format', type='selection', string='Printout format', relation='declaration.prep', readonly=True),
+        'move_id': fields.many2one('account.move', 'Transfer to Supplier Account', readonly=True),
+        'voucher_id': fields.many2one('account.voucher', 'Payment voucher', readonly=True),
+        'amount' : fields.float('Amount due', digits_compute=dp.get_precision('Account'), readonly=True), 
+        'date_from': fields.date('Date From', required=True),
+        'date_to': fields.date('Date To', required=True),
+        'date_confirm' : fields.date('Date', select=True), 
+        'company_id': fields.many2one('res.company', 'Company', required=True),
+        'currency_id': fields.many2one('res.currency', 'Currency', required=True),
+        'user_id': fields.many2one('res.users', 'User', required=True),
+        'state': fields.selection([
+                ('draft', 'Draft'),
+                ('confirmed', 'Confirmed'),
+                ('transferred', 'Transferred'),
+                ('waiting', 'Draft Payment'),
+                ('paid', 'Paid'),
+                ],
+                'Status', readonly=True, track_visibility='onchange'),
+    }
+
+    _defaults = {
+        'company_id': lambda s, cr, uid, c: s.pool.get('res.company')._company_default_get(cr, uid, 'hr.employee', context=c),
+        'date_from': lambda *a: time.strftime('%Y-%m-01'),
+        'date_to': lambda *a: str(datetime.now() + relativedelta.relativedelta(months=+1, day=1, days=-1))[:10],
+        'currency_id': _get_currency,
+        'state': 'draft',
+        'user_id': lambda cr, uid, id, c={}: id,
+    }
+
+    def create(self, cr, uid, vals, context=None):
+        if vals.get('name','/') == '/':
+            vals['name'] = self.pool.get('ir.sequence').get(cr, uid, 'declaration.report') or '/'
+        return super(declaration_report, self).create(cr, uid, vals, context=context)
+
+    def compute_lines(self, cr, uid, ids, context=None):
+        """
+        For each register, we need to iterate through the statement lines
+        and keep only the pertinent ones.
+        From there, we build a dictionary of values that we need to do the rest.
+        """
+        report_line_obj = self.pool.get('declaration.report.line')
+        report_obj = self.pool.get('declaration.report')
+        payslip_line = self.pool.get('hr.payslip.line')
+        payslip_lines = []
+        res = []
+        total = 0.0
+        # TODO: We need a dictionnary that maps the gross to the slip_id
+        for declaration in self.browse(cr, uid, ids, context=context):
+            cr.execute("SELECT hp.id,pl.total from hr_payslip_line AS pl "\
+                        "LEFT JOIN hr_payslip AS hp on (pl.slip_id = hp.id) "\
+                        "WHERE pl.code = 'GROSS'"\
+                        "AND (hp.date_from >= %s) AND (hp.date_to <= %s) "\
+                        "AND hp.state = 'done' "\
+                        "ORDER BY pl.slip_id, pl.sequence",
+                        (declaration.date_from, declaration.date_to))
+            gross_map = {x[0]:x[1] for x in cr.fetchall()}            
+            # clean existing report_line:
+            old_line_ids = report_line_obj.search(cr, uid, [('declaration_id', '=', declaration.id)], context=context)
+#            old_slipline_ids
+            if old_line_ids:
+                report_line_obj.unlink(cr, uid, old_line_ids, context=context)
+            for register in declaration.prep_id.register_ids:
+                cr.execute("SELECT pl.id from hr_payslip_line as pl "\
+                                "LEFT JOIN hr_payslip AS hp on (pl.slip_id = hp.id) "\
+                                "WHERE (hp.date_from >= %s) AND (hp.date_to <= %s) "\
+                                "AND pl.register_id = %s "\
+                                "AND hp.state = 'done' "\
+                                "ORDER BY pl.slip_id, pl.sequence",
+                                (declaration.date_from, declaration.date_to, register.id))
+                payslip_lines = [x[0] for x in cr.fetchall()]
+                for line in payslip_line.browse(cr, uid, payslip_lines):
+                    res.append({
+                        'declaration_id': declaration.id,
+                        'employee_id': line.employee_id.id,
+                        'name': line.name,
+                        'account_id': line.salary_rule_id.account_credit.id,
+                        'gross': gross_map.get(line.slip_id.id, 0.0),
+                        'total': line.total,
+                    })
+                    total += line.total
+            lines = [(0,0,line) for line in res]
+            self.write(cr, uid, [declaration.id], {'line_ids': lines, 'amount':total,}, context=context)
+        return True
+    
+    def confirm_report(self, cr, uid, ids, context=None):
+        return self.write(cr, uid, ids, {'state': 'confirmed', 'date_confirm': time.strftime('%Y-%m-%d')}, context=context)
+
+    def make_move(self, cr, uid, ids, context=None):
+        self._receipt_create(cr, uid, ids, context)
+        return self.write(cr, uid, ids, {'state': 'transferred'}, context=context)
+
+    def make_voucher(self, cr, uid, ids, context=None):
+        return self.write(cr, uid, ids, {'state': 'waiting'}, context=context)
+
+    
+    def make_draft(self, cr, uid, ids, context=None):
+        '''Remove any unpaid voucher and move created and reset to draft'''
+        move_obj = self.pool.get('account.move')
+        voucher_obj = self.pool.get('account.voucher')
+        for declaration in self.browse(cr, uid, ids, context=context):
+            if declaration.move_id:
+                move_obj.unlink(cr, uid, [declaration.move_id.id], context=context)
+            if declaration.voucher_id:
+                voucher_obj.unlink(cr, uid, [declaration.voucher_id.id], context=context)
+        return self.write(cr, uid, ids, {'state': 'draft', 'date_confirm': None}, context=context)
+
+    def condition_paid(self, cr, uid, ids, context=None):
+        ok = True
+        for l in self.browse(cr, uid, ids, context=context):
+            if l.voucher_id.state == 'posted':
+                ok = False
+        return ok
+
+    def _move_get(self, cr, uid, declaration_id, context=None):
+        '''
+        This method prepare the creation of the account move related to the given declaration.
+
+        :param declaration_id: Id of declaration for which we are creating account_move.
+        :return: mapping between fieldname and value of account move to create
+        :rtype: dict
+        '''
+        journal_obj = self.pool.get('account.journal')
+        declaration = self.browse(cr, uid, declaration_id, context=context)
+        company_id = declaration.company_id.id
+        date = declaration.date_confirm
+        ref = declaration.name
+        journal_id = False
+        if declaration.prep_id.journal_id:
+            journal_id = declaration.prep_id.journal_id.id
+        else:
+            journal_id = journal_obj.search(cr, uid, [('type', '=', 'general'), ('company_id', '=', company_id)])
+            if not journal_id:
+                raise osv.except_osv(_('Error!'), _("No declaration journal found. Please make sure you have a journal with type 'general' configured."))
+            journal_id = journal_id[0]
+        return self.pool.get('account.move').account_move_prepare(cr, uid, journal_id, date=date, ref=ref, company_id=company_id, context=context)
+
+    def _receipt_create(self, cr, uid, ids, context=None):
+        """Create accounting entries for this declaration"""
+        move_obj = self.pool.get('account.move')
+        move_line_obj = self.pool.get('account.move.line')
+        return_ids = []
+        for declaration in self.browse(cr, uid, ids, context=context):
+            if declaration.move_id:
+                continue
+            
+            #create the move that will contain the accounting entries
+            move_id = move_obj.create(cr, uid, self._move_get(cr, uid, declaration.id, context=context), context=context)
+        
+            lml = []
+            amount = 0.0
+            # compact debit lines
+            m = {}
+            for line in declaration.line_ids:
+                if not m.get(line.account_id.id):
+                    m[line.account_id.id] = {
+                        'name': declaration.partner_id.name,
+                        'partner_id': declaration.prep_id.partner_id.id,
+                        'account_id': line.account_id.id, 
+                        'date_maturity': declaration.date_confirm, 
+                        'debit':0.0,
+                        }
+                m[line.account_id.id]['debit'] += line.total
+            # create the move lines
+            for o in m.keys():
+                lml.append(m[o]) # debit
+                lml.append({
+                        'name': declaration.partner_id.name,
+                        'partner_id': declaration.prep_id.partner_id.id,
+                        'account_id': declaration.prep_id.account_id.id, 
+                        'date_maturity': declaration.date_confirm, 
+                        'credit': m[o]['debit'], 
+                        }) #credit
+            #convert eml into an osv-valid format
+            print lml
+            lines = [(0,0,x) for x in lml]
+            move_obj.write(cr, uid, [move_id], {'line_id': lines}, context=context)
+            # post the journal entry if 'Skip 'Draft' State for Manual Entries' is checked
+            journal_id = move_obj.browse(cr, uid, move_id, context).journal_id
+            if journal_id.entry_posted:
+                move_obj.button_validate(cr, uid, [move_id], context)
+            return_ids.append(
+                self.write(cr, uid, ids, {'move_id': move_id, 'state': 'transferred'}, context=context))
+        return return_ids
+
+    #~ def print_report(self, cr, uid, ids, context=None):
+        #~ report_map = {
+            #~ 'cnss': 'declaration.report.cnss',
+            #~ 'ipts': 'declaration.report.ipts'
+        #~ }
+        #~ return {
+            #~ 'type': 'ir.actions.report.xml', 
+            #~ 'report_name': report_map.get(context.get('format')),
+            #~ 'datas': {
+                    #~ 'model':'hr.loan',
+                    #~ 'id': ids and ids[0] or False,
+                    #~ 'ids': ids and ids or [],
+                    #~ 'report_type': 'pdf'
+                #~ },
+            #~ 'nodestroy': True
+        #~ }
+
+declaration_report()
+
+class declaration_prep(osv.osv):
+    _name = 'declaration.prep'
+    _description = 'Benin Payroll Declaration Settings' 
+
+    _columns = {
+        "name": fields.char('Name', size=256, required=True),
+        'partner_id':fields.many2one('res.partner', 'Partner', required=True, help=_("Who we are paying")),
+        'account_id': fields.many2one('account.account', 'Credit Account', required=True, 
+            domain="[('type', '=', 'payable')]", help=_("The payable account to use")),
+        'journal_id': fields.many2one('account.journal', 'Journal', required=True, help = "The journal used to record declarations."),
+        'format': fields.selection([
+                ('cnss', 'CNSS'),
+                ('ipts', 'DGCTP'),
+                ],
+                'Printout Format',
+                help=_('Select the format to use when printing this type of declaration'),
+                required=True),
+        'register_ids': fields.many2many(
+            'hr.contribution.register',
+            'declaration_prep_register_rel',
+            'prep_id', 'register_id', string='Associated registers',
+            domain="[('partner_id', '=', partner_id)]",
+            help=_("The registers where concerned payslip lines are kept")),
+    }
+declaration_prep()
+
+class contrib_register(osv.osv):
+
+    _inherit = 'hr.contribution.register'
+
+    _columns = {
+        'prep_ids': fields.many2many(
+            'declaration.prep',
+            'declaration_prep_register_rel',
+            'register_id', 'prep_id', string='Associated Declaration Settings'),
+    }
+contrib_register()
+
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
