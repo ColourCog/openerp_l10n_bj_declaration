@@ -8,7 +8,7 @@
         'l10n_bj_payroll',
         'account_accountant',
         'hr_payroll_account',
-        'account_voucher',
+        'account_check_writing',
     ],
     'version': '1.0',
     'description': """
@@ -18,9 +18,12 @@ This module enables a company to generate, store and print
 Benin Payroll declarations.
     """,
     'data':[
+        "security/declaration_security.xml",
+        "security/ir.model.access.csv",
         'declaration_view.xml',
         'declaration_data.xml',
         'declaration_report.xml',
+        'declaration_workflow.xml',
         'declaration_sequence.xml',
     ],
     "installable": True,

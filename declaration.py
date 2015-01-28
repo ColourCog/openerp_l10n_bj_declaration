@@ -11,7 +11,7 @@ class declaration_report_line(osv.osv):
     _columns = {
         'declaration_id': fields.many2one('declaration.report', 'Declaration', ondelete='cascade'),
         'employee_id' : fields.many2one('hr.employee', 'Employee'), 
-        'name' : fields.char('Name', size=254), 
+        'rule_id' : fields.many2one('hr.salary.rule', 'Rule'),  
         'account_id': fields.many2one('account.account', 'Debit Account'),
         'gross' : fields.float('Gross', digits_compute=dp.get_precision('Account')), 
         'total' : fields.float('Amount', digits_compute=dp.get_precision('Account')), 
@@ -26,8 +26,7 @@ class declaration_report(osv.osv):
     _description = 'Benin Payroll Declaration' 
     _track = {
         'state': {
-          'declaration_report.mt_declaration_transferred': lambda self, cr, uid, obj, ctx=None: obj['state'] == 'transferred',
-          'declaration_report.mt_declaration_waiting': lambda self, cr, uid, obj, ctx=None: obj['state'] == 'waiting',
+          'declaration_report.mt_declaration_confirmed': lambda self, cr, uid, obj, ctx=None: obj['state'] == 'confirmed',
           'declaration_report.mt_declaration_paid': lambda self, cr, uid, obj, ctx=None: obj['state'] == 'paid',
         },
     }
@@ -42,8 +41,9 @@ class declaration_report(osv.osv):
         'name' : fields.char('Name', size=64, select=True, readonly=True), 
         'partner_id': fields.related('prep_id', 'partner_id', type='many2one', string='Due to', relation='res.partner', readonly=True),
         'prep_id': fields.many2one('declaration.prep', 'Settings', required=True),
+        'bank_id': fields.many2one('res.partner.bank', 'Payment Bank', required=True),
         'line_ids':fields.one2many('declaration.report.line', 'declaration_id', 'Payslip Lines'),
-        'format': fields.related('prep_id', 'format', type='selection', string='Printout format', relation='declaration.prep', readonly=True),
+        'format': fields.related('prep_id', 'format', type='char', string='Printout format', relation='declaration.prep', readonly=True),
         'move_id': fields.many2one('account.move', 'Transfer to Supplier Account', readonly=True),
         'voucher_id': fields.many2one('account.voucher', 'Payment voucher', readonly=True),
         'amount' : fields.float('Amount due', digits_compute=dp.get_precision('Account'), readonly=True), 
@@ -117,7 +117,7 @@ class declaration_report(osv.osv):
                     res.append({
                         'declaration_id': declaration.id,
                         'employee_id': line.employee_id.id,
-                        'name': line.name,
+                        'rule_id': line.salary_rule_id.id,
                         'account_id': line.salary_rule_id.account_credit.id,
                         'gross': gross_map.get(line.slip_id.id, 0.0),
                         'total': line.total,
@@ -128,15 +128,10 @@ class declaration_report(osv.osv):
         return True
     
     def confirm_report(self, cr, uid, ids, context=None):
-        return self.write(cr, uid, ids, {'state': 'confirmed', 'date_confirm': time.strftime('%Y-%m-%d')}, context=context)
-
-    def make_move(self, cr, uid, ids, context=None):
+        self.write(cr, uid, ids, {'date_confirm': time.strftime('%Y-%m-%d')}, context=context)
         self._receipt_create(cr, uid, ids, context)
-        return self.write(cr, uid, ids, {'state': 'transferred'}, context=context)
-
-    def make_voucher(self, cr, uid, ids, context=None):
-        return self.write(cr, uid, ids, {'state': 'waiting'}, context=context)
-
+        self._voucher_create(cr, uid, ids, context)
+        return self.write(cr, uid, ids, {'state': 'confirmed', 'date_confirm': time.strftime('%Y-%m-%d')}, context=context)
     
     def make_draft(self, cr, uid, ids, context=None):
         '''Remove any unpaid voucher and move created and reset to draft'''
@@ -148,6 +143,11 @@ class declaration_report(osv.osv):
             if declaration.voucher_id:
                 voucher_obj.unlink(cr, uid, [declaration.voucher_id.id], context=context)
         return self.write(cr, uid, ids, {'state': 'draft', 'date_confirm': None}, context=context)
+
+    def _get_paid_declarations(self, cr, uid, ids, context=None):
+        res = { this.id : True for this in self.browse(cr, uid, ids, context=context)
+                if this.voucher_id.state == 'posted' and this.move_id.state == 'posted'}
+        return res.keys()
 
     def condition_paid(self, cr, uid, ids, context=None):
         ok = True
@@ -170,13 +170,9 @@ class declaration_report(osv.osv):
         date = declaration.date_confirm
         ref = declaration.name
         journal_id = False
-        if declaration.prep_id.journal_id:
-            journal_id = declaration.prep_id.journal_id.id
-        else:
-            journal_id = journal_obj.search(cr, uid, [('type', '=', 'general'), ('company_id', '=', company_id)])
-            if not journal_id:
-                raise osv.except_osv(_('Error!'), _("No declaration journal found. Please make sure you have a journal with type 'general' configured."))
-            journal_id = journal_id[0]
+        if not declaration.prep_id.journal_id:
+            raise osv.except_osv(_('Error!'), _("No declaration journal found."))
+        journal_id = declaration.prep_id.journal_id.id
         return self.pool.get('account.move').account_move_prepare(cr, uid, journal_id, date=date, ref=ref, company_id=company_id, context=context)
 
     def _receipt_create(self, cr, uid, ids, context=None):
@@ -196,27 +192,27 @@ class declaration_report(osv.osv):
             # compact debit lines
             m = {}
             for line in declaration.line_ids:
-                if not m.get(line.account_id.id):
-                    m[line.account_id.id] = {
-                        'name': declaration.partner_id.name,
+                if not m.get(line.rule_id.id):
+                    m[line.rule_id.id] = {
+                        'name': line.rule_id.name,
                         'partner_id': declaration.prep_id.partner_id.id,
                         'account_id': line.account_id.id, 
                         'date_maturity': declaration.date_confirm, 
                         'debit':0.0,
                         }
-                m[line.account_id.id]['debit'] += line.total
+                m[line.rule_id.id]['debit'] += line.total
             # create the move lines
             for o in m.keys():
                 lml.append(m[o]) # debit
                 lml.append({
-                        'name': declaration.partner_id.name,
+                        'name': m[o]['name'],
                         'partner_id': declaration.prep_id.partner_id.id,
                         'account_id': declaration.prep_id.account_id.id, 
                         'date_maturity': declaration.date_confirm, 
                         'credit': m[o]['debit'], 
                         }) #credit
             #convert eml into an osv-valid format
-            print lml
+            #~ print lml
             lines = [(0,0,x) for x in lml]
             move_obj.write(cr, uid, [move_id], {'line_id': lines}, context=context)
             # post the journal entry if 'Skip 'Draft' State for Manual Entries' is checked
@@ -227,22 +223,64 @@ class declaration_report(osv.osv):
                 self.write(cr, uid, ids, {'move_id': move_id, 'state': 'transferred'}, context=context))
         return return_ids
 
-    #~ def print_report(self, cr, uid, ids, context=None):
-        #~ report_map = {
-            #~ 'cnss': 'declaration.report.cnss',
-            #~ 'ipts': 'declaration.report.ipts'
-        #~ }
-        #~ return {
-            #~ 'type': 'ir.actions.report.xml', 
-            #~ 'report_name': report_map.get(context.get('format')),
-            #~ 'datas': {
-                    #~ 'model':'hr.loan',
-                    #~ 'id': ids and ids[0] or False,
-                    #~ 'ids': ids and ids or [],
-                    #~ 'report_type': 'pdf'
-                #~ },
-            #~ 'nodestroy': True
-        #~ }
+    def _voucher_create(self, cr, uid, ids, context=None):
+        voucher_obj = self.pool.get('account.voucher')
+        move_line_obj = self.pool.get('account.move.line')
+        journal_obj = self.pool.get('account.journal')
+        for declaration in self.browse(cr, uid, ids, context=context):
+            if declaration.voucher_id:
+                continue
+            voucher = {
+                'journal_id': declaration.bank_id.journal_id.id,
+                'company_id': declaration.company_id.id,
+                'partner_id': declaration.prep_id.partner_id.id,
+                'type':'payment',
+                'name': declaration.prep_id.name,
+                'account_id': declaration.prep_id.account_id.id,
+                'amount': declaration.amount,
+                'date': declaration.date_confirm,
+                'date_due': declaration.date_confirm,
+                }
+            # Define the voucher line
+            lml = []
+            move_line_ids = move_line_obj.search(cr, uid, 
+                [('reconcile_id','=',False),
+                ('reconcile_partial_id','=',False),
+                ('account_id','=',declaration.prep_id.account_id.id),
+                ('partner_id','=',declaration.prep_id.partner_id.id)], context=context)
+            for move_line_id in move_line_obj.browse(cr, uid, move_line_ids, context=context):
+                lml.append({
+                    'name': move_line_id.name,
+                    'move_line_id': move_line_id.id,
+                    'reconcile': False,
+                    'amount': move_line_id.debit > 0 and move_line_id.debit or move_line_id.credit,
+                    'account_id': move_line_id.account_id.id,
+                    'type': move_line_id.credit and 'dr' or 'cr',
+                    })
+            lines = [(0,0,x) for x in lml]
+            voucher['line_ids'] = lines
+            voucher_id = self.pool.get('account.voucher').create(
+                cr, uid, voucher, context=context)
+            self.write(cr, uid, [declaration.id], {'voucher_id': voucher_id}, context=context)
+                
+
+    def print_report(self, cr, uid, ids, context=None):
+        report_map = {
+            'cnss': 'declaration.cnss',
+            'ipts': 'declaration.ipts',
+            'aib': 'declaration.aib',
+        }
+        return {
+            'type': 'ir.actions.report.xml', 
+            'report_name': report_map.get(context.get('format')),
+            'datas': {
+                    'model':'declaration.report',
+                    'id': ids and ids[0] or False,
+                    'ids': ids and ids or [],
+                    'report_type': 'pdf'
+                },
+            'nodestroy': True
+        }
 
 declaration_report()
 
@@ -258,7 +296,8 @@ class declaration_prep(osv.osv):
         'journal_id': fields.many2one('account.journal', 'Journal', required=True, help = "The journal used to record declarations."),
         'format': fields.selection([
                 ('cnss', 'CNSS'),
-                ('ipts', 'DGCTP'),
+                ('ipts', 'IPTS'),
+                ('aib', 'AIB'),
                 ],
                 'Printout Format',
                 help=_('Select the format to use when printing this type of declaration'),

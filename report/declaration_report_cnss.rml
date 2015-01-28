@@ -121,10 +121,12 @@
     <paraStyle name="terp_default_address" rightIndent="0.0" leftIndent="0.0" fontSize="10.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
     <paraStyle name="terp_headroom_default_9" rightIndent="0.0" leftIndent="0.0" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="10" spaceAfter="0.0"/>
     <paraStyle name="terp_default_9" rightIndent="0.0" leftIndent="0.0" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="2.0"/>
-    <paraStyle name="terp_default_12" rightIndent="0.0" leftIndent="0.0" fontSize="12.0" leading="20" alignment="LEFT" spaceBefore="0.0" spaceAfter="2.0"/>
+    <paraStyle name="terp_default_10" rightIndent="0.0" leftIndent="0.0" fontSize="10.0" leading="20" alignment="LEFT" spaceBefore="0.0" spaceAfter="5.0"/>
     <paraStyle name="terp_default_Bold_9" rightIndent="0.0" leftIndent="-3.0" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
     <paraStyle name="terp_default_Centre_9" rightIndent="0.0" leftIndent="0.0" fontSize="9.0" leading="11" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_default_Centre_10" rightIndent="0.0" leftIndent="0.0" fontSize="10.0" leading="11" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
     <paraStyle name="terp_default_Right_9" rightIndent="0.0" leftIndent="0.0" fontSize="9.0" leading="11" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_default_Right_10" rightIndent="0.0" leftIndent="0.0" fontSize="10.0" leading="11" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
     <paraStyle name="terp_default_Bold_Right_8" rightIndent="0.0" leftIndent="-3.0" fontSize="8.0" leading="11" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
     <paraStyle name="terp_default_Bold_Right_9" rightIndent="0.0" leftIndent="-3.0" fontSize="9.0" leading="11" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
     <paraStyle name="terp_default_2" rightIndent="0.0" leftIndent="0.0" fontSize="2.0" leading="3" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
@@ -138,29 +140,96 @@
   <story>
   
     <para style="terp_default_8">[[ repeatIn(objects,'o') ]]</para>
-    <para style="terp_default_8">[[ setLang(o.user_id.lang) ]]</para>
-    <para style="terp_header"><b>Loan Receipt [[o.name ]]</b></para>
+    <para style="terp_default_8">[[ setLang(o.partner_id.lang) ]]</para>
+    <!-- Document header-->
+    <blockTable colWidths="265.0,265.0" style="Table1">
+      <tr>
+        <td><para style="terp_header">No. Employeur: [[ o.company_id.cnss_number ]]</para></td>
+        <td><para style="terp_header">Periode: [[ reformat(formatLang(o.date_to, date=True), '%B %Y') ]]</para></td>
+      </tr>
+    </blockTable>
+    <para style="terp_default_10">
+      <font color="white"> </font>
+    </para>
+      <blockTable colWidths="30.0,60.0,175,140,120" style="Table7">
+      <tr>
+        <td><para style="terp_tblheader_General_Centre"><b>No</b></para></td>
+        <td><para style="terp_tblheader_General"><b>No. CNSS</b></para></td>
+        <td><para style="terp_tblheader_General"><b>Nom</b></para></td>
+        <td><para style="terp_tblheader_General_Right"><b>Brut</b></para></td>
+        <td><para style="terp_tblheader_General_Right"><b>3,6%</b></para></td>
+      </tr>
+    </blockTable>
+    <section>
+      <para style="terp_default_2">[[ repeatIn(merge(o.line_ids, 'CNSSREG'),'l') ]]</para>
+      <blockTable colWidths="30.0,60.0,175,140,120" style="Table8">
+        <tr>
+          <td><para style="terp_default_9">[[ l[1] ]]</para></td>
+          <td><para style="terp_default_9">[[ l[0].employee_id.cnss_number ]]</para></td>
+          <td><para style="terp_default_9">[[ l[0].employee_id.name ]]</para></td>
+          <td><para style="terp_default_Right_9">[[ formatLang(l[0].gross, dp='Account', currency_obj=o.currency_id) ]]</para></td>
+          <td><para style="terp_default_Right_9">[[ formatLang(l[0].total, dp='Account', currency_obj=o.currency_id) ]]</para></td>
+        </tr>
+      </blockTable>
+    </section>
+      <blockTable colWidths="30.0,60.0,175,140,120" style="Table10">
+      <tr>
+        <td><para style="terp_default_9"></para></td>
+        <td><para style="terp_default_9"></para></td>
+        <td><para style="terp_default_9"><b>Total</b></para></td>
+        <td><para style="terp_default_Right_10"><b>[[ formatLang(sum_line(subset(o.line_ids, 'CNSSREG'),'gross'), dp='Account', currency_obj=o.currency_id) ]]</b></para></td>
+        <td><para style="terp_default_Right_10"><b>[[ formatLang(sum_line(subset(o.line_ids, 'CNSSREG'),'total'), dp='Account', currency_obj=o.currency_id) ]]</b></para></td>
+      </tr>
+      <tr>
+        <td><para style="terp_default_9"><font color="white"> </font></para></td>
+        <td><para style="terp_default_9"></para></td>
+        <td><para style="terp_default_9"></para></td>
+        <td><para style="terp_default_Right_10"></para></td>
+        <td><para style="terp_default_Right_10"></para></td>
+      </tr>
+    </blockTable>
     <para style="terp_default_8">
       <font color="white"> </font>
     </para>
-    <para style="terp_default_12">This is to certify that <b>[[ o.employee_id.name ]]</b> 
-    has this day [[ time.strftime("%d/%m/%Y") ]] received from the accounting department a loan amounting to 
-    <b>[[ formatLang(o.amount, dp='Account', currency_obj=o.currency_id) ]]</b> as requested for the stated 
-    purpose of <em>[[ o.notes ]]</em>.</para>
-    <para style="terp_default_12"> [[ o.employee_id.name ]] hereby agrees to abide by the terms of reimbursment of <b>[[ o.nb_payments ]]</b> monthly installments.</para>
-    <para style="terp_default_9">
-      <font color="white"> </font>
-    </para>
-    <hr/>
-    <blockTable colWidths="220.0,90.00,220.0" style="Table1">
+    <section>
+      <para style="terp_default_2">[[ repeatIn(totals(o.line_ids),'t') ]]</para>
+      <blockTable colWidths="30.0,60.0,175,140,120" style="Table8">
+        <tr>
+          <td><para style="terp_default_9"></para></td>
+          <td><para style="terp_default_9"></para></td>
+          <td><para style="terp_default_9"><i>[[ t[0] ]]</i></para></td>
+          <td><para style="terp_default_Right_9"></para></td>
+          <td><para style="terp_default_Right_9">[[ formatLang(t[1], dp='Account', currency_obj=o.currency_id) ]]</para></td>
+        </tr>
+      </blockTable>
+    </section>
+      <blockTable colWidths="30.0,60.0,175,140,120" style="Table10">
       <tr>
-      <td><para style="terp_default_12"><u>Financial and Administrative Director</u></para></td>
-      <td></td>
-      <td><para style="terp_default_12"><u>Beneficiary</u></para></td>
+        <td><para style="terp_default_9"></para></td>
+        <td><para style="terp_default_9"></para></td>
+        <td><para style="terp_default_9"></para></td>
+        <td><para style="terp_default_Right_10"><b>Net a Payer</b></para></td>
+        <td><para style="terp_default_Right_10"><b>[[ formatLang(sum_line(o.line_ids,'total'), dp='Account', currency_obj=o.currency_id) ]]</b></para></td>
       </tr>
     </blockTable>
-    <para style="terp_default_2">
+    <para style="terp_header">
       <font color="white"> </font>
     </para>
+    <para style="terp_default_Centre_10">Arrete la presente declaration a la somme de <b>[[o.voucher_id.amount_in_word ]]</b>, soit <b>[[ formatLang(sum_line(o.line_ids,'total'), dp='Account', currency_obj=o.currency_id) ]]</b></para>
+    <para style="terp_header">
+      <font color="white"> </font>
+    </para>
+    <blockTable colWidths="265.0,265.0" style="Table1">
+      <tr>
+        <td>
+          <para style="terp_default_10">Banque: [[ o.bank_id.bank.name ]]</para>
+          <para style="terp_default_10">Cheque No: [[ o.voucher_id.reference ]]</para>
+          <para style="terp_default_10">Date d'emission: [[ o.voucher_id.date ]]</para>
+        </td>
+        <td>
+          <para style="terp_default_10">Paye le:</para>
+        </td>
+      </tr>
+    </blockTable>
   </story>
 </document>

@@ -10,94 +10,24 @@
             <field name="on_create">True</field>
         </record>
 
-        <record id="act_draft" model="workflow.activity">
+        <record id="act_confirmed" model="workflow.activity">
             <field name="wkf_id" ref="wkf_declarations"/>
-            <field name="name">draft</field>
+            <field name="name">confirmed</field>
             <field name="flow_start">True</field>
-            <field name="kind">function</field>
-            <field name="action">_compute()</field>
+            <field name="kind">dummy</field>
         </record>
-
-       <record id="act_accepted" model="workflow.activity">
+        <record id="act_paid" model="workflow.activity">
             <field name="wkf_id" ref="wkf_declarations"/>
-            <field name="name">accepted</field>
-            <field name="kind">function</field>
-            <field name="action">loan_accept()</field>
-        </record>
-
-        <record id="act_refused" model="workflow.activity">
-            <field name="wkf_id" ref="wkf_declarations"/>
-            <field name="name">refused</field>
-            <field name="kind">function</field>
-            <field name="action">loan_canceled()</field>
-        </record>
-
-        <record id="act_done" model="workflow.activity">
-            <field name="wkf_id" ref="wkf_declarations"/>
-            <field name="name">done</field>
-            <field name="kind">function</field>
-            <field name="action">action_receipt_create()</field>
-        </record>
-
-         <record id="act_paid" model="workflow.activity">
-            <field name="wkf_id" ref="wkf_declarations" />
             <field name="name">paid</field>
-            <field name="kind">function</field>
-            <field name="action">write({'state': 'paid'})</field>
             <field name="flow_stop">True</field>
+            <field name="kind">dummy</field>
         </record>
+
 
         <!-- Transitions -->
-        <record id="t1" model="workflow.transition">
-            <field name="act_from" ref="act_draft"/>
-            <field name="act_to" ref="act_confirm"/>
-            <field name="signal">confirm</field>
-        </record>
-
-        <record id="t2" model="workflow.transition">
-            <field name="act_from" ref="act_confirm"/>
-            <field name="act_to" ref="act_accepted"/>
-            <field name="signal">validate</field>
-            <field name="group_id" ref="base.group_hr_user"/>
-        </record>
-
-        <record id="t4" model="workflow.transition">
-            <field name="act_from" ref="act_confirm"/>
-            <field name="act_to" ref="act_refused"/>
-            <field name="signal">refuse</field>
-            <field name="group_id" ref="base.group_hr_user"/>
-        </record>
-
-        <record id="t6" model="workflow.transition">
-            <field name="act_from" ref="act_accepted"/>
-            <field name="act_to" ref="act_refused"/>
-            <field name="signal">refuse</field>
-            <field name="group_id" ref="base.group_hr_user"/>
-        </record>
-
-        <record id="t7" model="workflow.transition">
-            <field name="act_from" ref="act_confirm"/>
-            <field name="act_to" ref="act_draft"/>
-            <field name="signal">draft</field>
-            <field name="group_id" ref="base.group_hr_user"/>
-        </record>
-
-        <record id="t8" model="workflow.transition">
-            <field name="act_from" ref="act_accepted"/>
-            <field name="act_to" ref="act_done"/>
-            <field name="signal">done</field>
-            <field name="group_id" ref="base.group_hr_user"/>
-        </record>
-
-        <record id="t10" model="workflow.transition">
-            <field name="act_from" ref="act_refused"/>
-            <field name="act_to" ref="act_draft"/>
-            <field name="signal">draft</field>
-            <field name="group_id" ref="base.group_hr_user"/>
-        </record>
 
         <record id="t11" model="workflow.transition">
-            <field name="act_from" ref="act_done" />
+            <field name="act_from" ref="act_confirmed" />
             <field name="act_to" ref="act_paid" />
             <field name="trigger_model">declaration.report</field>
             <field name="trigger_expr_id">_get_paid_declarations()</field>

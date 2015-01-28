@@ -7,9 +7,9 @@ class res_company(osv.osv):
     _inherit = 'res.company'
 
     _columns = {
-        "cnss_number": fields.integer("CNSS number"),
-        "insae_number": fields.integer("INSAE number"),
-        "ifu_number": fields.integer("IFU number"),
+        "cnss_number": fields.char("CNSS number", size=256),
+        "insae_number": fields.char("INSAE number", size=256),
+        "ifu_number": fields.char("IFU number", size=256),
         "activity": fields.char('Activity', size=256),
         "other_name": fields.char('Other Name', size=256),
     }
@@ -19,8 +19,8 @@ class hr_employee(osv.osv):
     _inherit = "hr.employee"
 
     _columns = {
-        "cnss_number": fields.integer("CNSS number"),
-        "ifu_number": fields.integer("IFU number"),
+        "cnss_number": fields.char("CNSS number", size=256),
+        "ifu_number": fields.char("IFU number", size=256),
     }
 
 hr_employee()
