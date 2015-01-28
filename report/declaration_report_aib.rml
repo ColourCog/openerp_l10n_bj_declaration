@@ -201,28 +201,24 @@
     <para style="terp_default_10">
       <font color="white"> </font>
     </para>
-    <para style="terp_default_10"><b>II - LIQUIDATION DES IMPOTS SUR SALAIRE</b></para>
+    <para style="terp_default_10"><b>II - LIQUIDATION DES DROITS</b></para>
     <blockTable colWidths="335.0,200.0" style="Table_Invoice_General_Header">
       <tr>
         <td><para style="terp_default_9">1. Nombre de Salaries</para></td>
-        <td><para style="terp_default_Right_9">[[ len(subset(o.line_ids, 'IPTSREG')) ]]</para></td>
+        <td><para style="terp_default_Right_9">[[ len(subset(o.line_ids, 'AIBREG')) ]]</para></td>
       </tr>
       <tr>
         <td><para style="terp_default_9">2. Montant brut des Salaires</para></td>
-        <td><para style="terp_default_Right_9">[[ formatLang(sum_line(subset(o.line_ids, 'IPTSREG'),'gross'), dp='Account', currency_obj=o.currency_id) ]]</para></td>
+        <td><para style="terp_default_Right_9">[[ formatLang(sum_line(subset(o.line_ids, 'AIBREG'),'gross'), dp='Account', currency_obj=o.currency_id) ]]</para></td>
       </tr>
       <tr>
-        <td><para style="terp_default_9">3. Montant de l'IPTS</para></td>
-        <td><para style="terp_default_Right_9">[[ formatLang(sum_line(subset(o.line_ids, 'IPTSREG'),'total'), dp='Account', currency_obj=o.currency_id) ]]</para></td>
-      </tr>
-      <tr>
-        <td><para style="terp_default_9">4. Montant du VPS</para></td>
-        <td><para style="terp_default_Right_9">[[ formatLang(sum_line(subset(o.line_ids, 'VPSREG'),'total'), dp='Account', currency_obj=o.currency_id) ]]</para></td>
+        <td><para style="terp_default_9">3. Montant des prevelements</para></td>
+        <td><para style="terp_default_Right_9">[[ formatLang(sum_line(subset(o.line_ids, 'AIBREG'),'total'), dp='Account', currency_obj=o.currency_id) ]]</para></td>
       </tr>
     </blockTable>
     <blockTable colWidths="335.0,200.0" style="Table_Invoice_General_Header">
       <tr>
-        <td><para style="terp_default_9">5. Totaux des lignes 3 et 4</para></td>
+        <td><para style="terp_default_9">4. Net a Payer</para></td>
         <td><para style="terp_default_Right_9"><b>[[ formatLang(sum_line(o.line_ids,'total'), dp='Account', currency_obj=o.currency_id) ]]</b></para></td>
       </tr>
     </blockTable>
@@ -263,14 +259,7 @@
           </blockTable>
           <blockTable colWidths="100,100,100" style="Table_General_Detail_Content">
             <tr>
-              <td><para style="terp_default_9">IPTS</para></td>
-              <td><para style="terp_default_9"></para></td>
-              <td><para style="terp_default_9"></para></td>
-            </tr>
-          </blockTable>
-          <blockTable colWidths="100,100,100" style="Table_General_Detail_Content">
-            <tr>
-              <td><para style="terp_default_9">VPS</para></td>
+              <td><para style="terp_default_9">AIB</para></td>
               <td><para style="terp_default_9"></para></td>
               <td><para style="terp_default_9"></para></td>
             </tr>
@@ -307,38 +296,34 @@
       <font color="white"> </font>
     </para>
 
-      <blockTable colWidths="30.0,165,120,110,110" style="Table7">
+      <blockTable colWidths="30.0,200,140,140" style="Table7">
       <tr>
         <td><para style="terp_tblheader_General"><b>No</b></para></td>
         <td><para style="terp_tblheader_General"><b>Nom</b></para></td>
         <td><para style="terp_tblheader_General_Right"><b>Brut</b></para></td>
-        <td><para style="terp_tblheader_General_Right"><b>IPTS</b></para></td>
-        <td><para style="terp_tblheader_General_Right"><b>VPS</b></para></td>
+        <td><para style="terp_tblheader_General_Right"><b>AIB</b></para></td>
       </tr>
     </blockTable>
     <section>
-      <para style="terp_default_2">[[ repeatIn(merge(o.line_ids, 'IPTSREG', 'VPSREG'),'l') ]]</para>
-      <blockTable colWidths="30.0,165,120,110,110" style="Table8">
+      <para style="terp_default_2">[[ repeatIn(merge(o.line_ids, 'AIBREG'),'l') ]]</para>
+      <blockTable colWidths="30.0,200,140,140" style="Table8">
         <tr>
-          <td><para style="terp_default_9">[[ l[2] ]]</para></td>
+          <td><para style="terp_default_9">[[ l[1] ]]</para></td>
           <td><para style="terp_default_9">[[ l[0].name ]]</para></td>
           <td><para style="terp_default_Right_9">[[ formatLang(l[0].gross, dp='Account', currency_obj=o.currency_id) ]]</para></td>
           <td><para style="terp_default_Right_9">[[ formatLang(l[0].total, dp='Account', currency_obj=o.currency_id) ]]</para></td>
-          <td><para style="terp_default_Right_9">[[ formatLang(l[1].total, dp='Account', currency_obj=o.currency_id) ]]</para></td>
         </tr>
       </blockTable>
     </section>
-      <blockTable colWidths="30.0,165,120,110,110" style="Table10">
+      <blockTable colWidths="30.0,200,140,140" style="Table10">
       <tr>
         <td><para style="terp_default_9"></para></td>
         <td><para style="terp_default_9"><b>Total</b></para></td>
-        <td><para style="terp_default_Right_10"><b>[[ formatLang(sum_line(subset(o.line_ids, 'IPTSREG'),'gross'), dp='Account', currency_obj=o.currency_id) ]]</b></para></td>
-        <td><para style="terp_default_Right_10"><b>[[ formatLang(sum_line(subset(o.line_ids, 'IPTSREG'),'total'), dp='Account', currency_obj=o.currency_id) ]]</b></para></td>
-        <td><para style="terp_default_Right_10"><b>[[ formatLang(sum_line(subset(o.line_ids, 'VPSREG'),'total'), dp='Account', currency_obj=o.currency_id) ]]</b></para></td>
+        <td><para style="terp_default_Right_10"><b>[[ formatLang(sum_line(subset(o.line_ids, 'AIBREG'),'gross'), dp='Account', currency_obj=o.currency_id) ]]</b></para></td>
+        <td><para style="terp_default_Right_10"><b>[[ formatLang(sum_line(subset(o.line_ids, 'AIBREG'),'total'), dp='Account', currency_obj=o.currency_id) ]]</b></para></td>
       </tr>
       <tr>
         <td><para style="terp_default_9"><font color="white"> </font></para></td>
-        <td><para style="terp_default_9"></para></td>
         <td><para style="terp_default_9"></para></td>
         <td><para style="terp_default_Right_10"></para></td>
         <td><para style="terp_default_Right_10"></para></td>
@@ -347,20 +332,18 @@
     <para style="terp_default_8">
       <font color="white"> </font>
     </para>
-      <blockTable colWidths="30.0,165,120,110,110" style="Table8">
+      <blockTable colWidths="30.0,200,140,140" style="Table8">
         <tr>
-          <td><para style="terp_default_9"></para></td>
           <td><para style="terp_default_9"></para></td>
           <td><para style="terp_default_9"><i>Salaires Bruts</i></para></td>
           <td><para style="terp_default_Right_9"></para></td>
-          <td><para style="terp_default_Right_9">[[ formatLang(sum_line(subset(o.line_ids, 'IPTSREG'),'gross'), dp='Account', currency_obj=o.currency_id) ]]</para></td>
+          <td><para style="terp_default_Right_9">[[ formatLang(sum_line(subset(o.line_ids, 'AIBREG'),'gross'), dp='Account', currency_obj=o.currency_id) ]]</para></td>
         </tr>
       </blockTable>
     <section>
       <para style="terp_default_2">[[ repeatIn(totals(o.line_ids),'t') ]]</para>
-      <blockTable colWidths="30.0,165,120,110,110" style="Table8">
+      <blockTable colWidths="30.0,200,140,140" style="Table8">
         <tr>
-          <td><para style="terp_default_9"></para></td>
           <td><para style="terp_default_9"></para></td>
           <td><para style="terp_default_9"><i>[[ t[0] ]]</i></para></td>
           <td><para style="terp_default_Right_9"></para></td>
@@ -368,9 +351,8 @@
         </tr>
       </blockTable>
     </section>
-      <blockTable colWidths="30.0,165,120,110,110" style="Table10">
+      <blockTable colWidths="30.0,200,140,140" style="Table10">
       <tr>
-        <td><para style="terp_default_9"></para></td>
         <td><para style="terp_default_9"></para></td>
         <td><para style="terp_default_9"></para></td>
         <td><para style="terp_default_Right_10"><b>Net a Payer</b></para></td>

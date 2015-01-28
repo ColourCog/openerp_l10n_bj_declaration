@@ -156,7 +156,7 @@
                   <page string="Payslip Lines">
                     <field name="line_ids">
                       <tree string="Payslip Lines" editable="bottom">
-                        <field name="employee_id" />
+                        <field name="name" />
                         <field name="rule_id" />
                         <field name="account_id" />
                         <field name="gross"/>

@@ -8,8 +8,10 @@ import openerp.addons.decimal_precision as dp
 
 class declaration_report_line(osv.osv):
     _name = 'declaration.report.line'
+    _order = "name"
     _columns = {
         'declaration_id': fields.many2one('declaration.report', 'Declaration', ondelete='cascade'),
+        'name' : fields.char('Name', size=256, select=True, readonly=True), 
         'employee_id' : fields.many2one('hr.employee', 'Employee'), 
         'rule_id' : fields.many2one('hr.salary.rule', 'Rule'),  
         'account_id': fields.many2one('account.account', 'Debit Account'),
@@ -17,6 +19,7 @@ class declaration_report_line(osv.osv):
         'total' : fields.float('Amount', digits_compute=dp.get_precision('Account')), 
         
     }
+
 declaration_report_line()
 
 
@@ -116,6 +119,7 @@ class declaration_report(osv.osv):
                 for line in payslip_line.browse(cr, uid, payslip_lines):
                     res.append({
                         'declaration_id': declaration.id,
+                        'name': line.employee_id.name,
                         'employee_id': line.employee_id.id,
                         'rule_id': line.salary_rule_id.id,
                         'account_id': line.salary_rule_id.account_credit.id,
@@ -230,6 +234,8 @@ class declaration_report(osv.osv):
         for declaration in self.browse(cr, uid, ids, context=context):
             if declaration.voucher_id:
                 continue
+            if not declaration.move_id:
+                continue
             voucher = {
                 'journal_id': declaration.bank_id.journal_id.id,
                 'company_id': declaration.company_id.id,
@@ -243,16 +249,11 @@ class declaration_report(osv.osv):
                 }
             # Define the voucher line
             lml = []
-            move_line_ids = move_line_obj.search(cr, uid, 
-                [('reconcile_id','=',False),
-                ('reconcile_partial_id','=',False),
-                ('account_id','=',declaration.prep_id.account_id.id),
-                ('partner_id','=',declaration.prep_id.partner_id.id)], context=context)
-            for move_line_id in move_line_obj.browse(cr, uid, move_line_ids, context=context):
+            for move_line_id in declaration.move_id.line_id:
                 lml.append({
                     'name': move_line_id.name,
                     'move_line_id': move_line_id.id,
-                    'reconcile': False,
+                    'reconcile': True,
                     'amount': move_line_id.debit > 0 and move_line_id.debit or move_line_id.credit,
                     'account_id': move_line_id.account_id.id,
                     'type': move_line_id.credit and 'dr' or 'cr',
