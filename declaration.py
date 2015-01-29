@@ -264,6 +264,29 @@ class declaration_report(osv.osv):
                 cr, uid, voucher, context=context)
             self.write(cr, uid, [declaration.id], {'voucher_id': voucher_id}, context=context)
                 
+    def action_view_voucher(self, cr, uid, ids, context=None):
+        '''
+        This function returns an action that display existing account.move of given loan ids.
+        '''
+        assert len(ids) == 1, 'This option should only be used for a single id at a time'
+        declaration = self.browse(cr, uid, ids[0], context=context)
+        assert declaration.voucher_id
+        try:
+            dummy, view_id = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'account_voucher', 'view_vendor_payment_form')
+        except ValueError, e:
+            view_id = False
+        result = {
+            'name': _('Declaration Payment'),
+            'view_type': 'form',
+            'view_mode': 'form',
+            'view_id': view_id,
+            'res_model': 'account.voucher',
+            'type': 'ir.actions.act_window',
+            'nodestroy': True,
+            'target': 'current',
+            'res_id': declaration.voucher_id.id,
+        }
+        return result
 
     def print_report(self, cr, uid, ids, context=None):
         report_map = {

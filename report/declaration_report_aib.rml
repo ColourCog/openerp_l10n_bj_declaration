@@ -151,32 +151,32 @@
     <para style="terp_default_10">
       <font color="white"> </font>
     </para>
-    <para style="terp_default_Centre_10">Declaration du mois de [[ reformat(formatLang(o.date_to, date=True), '%B %Y') ]]</para>
+    <para style="terp_default_Centre_10">Déclaration du mois de [[ reformat(formatLang(o.date_to, date=True), '%B %Y') ]]</para>
     <para style="terp_default_10">
       <font color="white"> </font>
     </para>
     <para style="terp_default_10"><b>I - IDENTIFICATION</b></para>
     <blockTable colWidths="265.0,265.0" style="Table8">
       <tr>
-        <td><para style="terp_default_9">Nom et Prenom ou Raison Sociale</para></td>
+        <td><para style="terp_default_9">Nom et Prénom ou Raison Sociale</para></td>
         <td><para style="terp_default_9">[[ o.company_id.name ]]</para></td>
       </tr>
     </blockTable>
     <blockTable colWidths="265.0,265.0" style="Table8">
       <tr>
-        <td><para style="terp_default_9">Autre Denomination</para></td>
+        <td><para style="terp_default_9">Autre Dénomination</para></td>
         <td><para style="terp_default_9">[[ o.company_id.other_name ]]</para></td>
       </tr>
     </blockTable>
     <blockTable colWidths="265.0,265.0" style="Table8">
       <tr>
-        <td><para style="terp_default_9">Activite</para></td>
+        <td><para style="terp_default_9">Activité</para></td>
         <td><para style="terp_default_9">[[ o.company_id.activity ]]</para></td>
       </tr>
     </blockTable>
     <blockTable colWidths="265.0,265.0" style="Table8">
       <tr>
-        <td><para style="terp_default_9">Adresse (siege)</para></td>
+        <td><para style="terp_default_9">Adresse (siège)</para></td>
         <td><para style="terp_default_9">[[ o.company_id.street ]] [[ o.company_id.street2 ]] [[ o.company_id.zip ]] [[ o.company_id.city ]]</para></td>
       </tr>
     </blockTable>
@@ -204,7 +204,7 @@
     <para style="terp_default_10"><b>II - LIQUIDATION DES DROITS</b></para>
     <blockTable colWidths="335.0,200.0" style="Table_Invoice_General_Header">
       <tr>
-        <td><para style="terp_default_9">1. Nombre de Salaries</para></td>
+        <td><para style="terp_default_9">1. Nombre de Salariés</para></td>
         <td><para style="terp_default_Right_9">[[ len(subset(o.line_ids, 'AIBREG')) ]]</para></td>
       </tr>
       <tr>
@@ -212,34 +212,37 @@
         <td><para style="terp_default_Right_9">[[ formatLang(sum_line(subset(o.line_ids, 'AIBREG'),'gross'), dp='Account', currency_obj=o.currency_id) ]]</para></td>
       </tr>
       <tr>
-        <td><para style="terp_default_9">3. Montant des prevelements</para></td>
+        <td><para style="terp_default_9">3. Montant des prélèvements</para></td>
         <td><para style="terp_default_Right_9">[[ formatLang(sum_line(subset(o.line_ids, 'AIBREG'),'total'), dp='Account', currency_obj=o.currency_id) ]]</para></td>
       </tr>
     </blockTable>
     <blockTable colWidths="335.0,200.0" style="Table_Invoice_General_Header">
       <tr>
-        <td><para style="terp_default_9">4. Net a Payer</para></td>
+        <td><para style="terp_default_9">4. Net à Payer</para></td>
         <td><para style="terp_default_Right_9"><b>[[ formatLang(sum_line(o.line_ids,'total'), dp='Account', currency_obj=o.currency_id) ]]</b></para></td>
       </tr>
     </blockTable>
+    <para style="terp_default_8">
+      <font color="white"> </font>
+    </para>
+    <para style="terp_default_Centre_10">Arrêté la présente déclaration à la somme de <b>[[o.voucher_id.amount_in_word ]]</b>, soit <b>[[ formatLang(sum_line(o.line_ids,'total'), dp='Account', currency_obj=o.currency_id) ]]</b></para>
     <para style="terp_default_10">
       <font color="white"> </font>
     </para>
-    <para style="terp_default_Centre_10">Arrete la presente declaration a la somme de <b>[[o.voucher_id.amount_in_word ]]</b>, soit <b>[[ formatLang(sum_line(o.line_ids,'total'), dp='Account', currency_obj=o.currency_id) ]]</b></para>
     <para style="terp_default_10"><b>III - PAIEMENT</b></para>
 
     <blockTable colWidths="235.0,300.0" style="Table1">
       <tr>
         <td>
-          <para style="terp_default_9">Cheque No: [[ o.voucher_id.reference ]]</para>
+          <para style="terp_default_9">Chèque No: [[ o.voucher_id.reference ]]</para>
           <para style="terp_default_9">Banque: [[ o.bank_id.bank.name ]]</para>
-          <para style="terp_default_9">Date d'emission: [[ o.voucher_id.date ]]</para>
-          <para style="terp_default_9">Paye le:</para>
+          <para style="terp_default_9">Date d'émission: [[ o.voucher_id.date ]]</para>
+          <para style="terp_default_9">Payé le:</para>
         </td>
         <td>
           <blockTable colWidths="300" style="Table_General_Detail_Content">
             <tr>
-              <td><para style="terp_default_9"><b>Cadre Reserve a l'administration</b></para></td>
+              <td><para style="terp_default_9"><b>Cadre Réservé à l'administration</b></para></td>
             </tr>
           </blockTable>
           <blockTable colWidths="300.0" style="Table_General_Detail_Content">
@@ -252,7 +255,7 @@
           </blockTable>
           <blockTable colWidths="100,100,100" style="Table_General_Detail_Content">
             <tr>
-              <td><para style="terp_default_9">Penalite</para></td>
+              <td><para style="terp_default_9">Pénalité</para></td>
               <td><para style="terp_default_9">Motif</para></td>
               <td><para style="terp_default_9">Montant</para></td>
             </tr>
@@ -291,7 +294,7 @@
     <para style="terp_default_10">
       <font color="white"> </font>
     </para>
-    <para style="terp_default_Centre_10">Declaration du mois de [[ reformat(formatLang(o.date_to, date=True), '%B %Y') ]]</para>
+    <para style="terp_default_Centre_10">Déclaration du mois de [[ reformat(formatLang(o.date_to, date=True), '%B %Y') ]]</para>
     <para style="terp_default_10">
       <font color="white"> </font>
     </para>
@@ -329,13 +332,11 @@
         <td><para style="terp_default_Right_10"></para></td>
       </tr>
     </blockTable>
-    <para style="terp_default_8">
-      <font color="white"> </font>
-    </para>
+    <condPageBreak height="100"/>
       <blockTable colWidths="30.0,200,140,140" style="Table8">
         <tr>
           <td><para style="terp_default_9"></para></td>
-          <td><para style="terp_default_9"><i>Salaires Bruts</i></para></td>
+          <td><para style="terp_default_9"><i>Salaires Brûts</i></para></td>
           <td><para style="terp_default_Right_9"></para></td>
           <td><para style="terp_default_Right_9">[[ formatLang(sum_line(subset(o.line_ids, 'AIBREG'),'gross'), dp='Account', currency_obj=o.currency_id) ]]</para></td>
         </tr>
@@ -355,16 +356,13 @@
       <tr>
         <td><para style="terp_default_9"></para></td>
         <td><para style="terp_default_9"></para></td>
-        <td><para style="terp_default_Right_10"><b>Net a Payer</b></para></td>
+        <td><para style="terp_default_Right_10"><b>Net à Payer</b></para></td>
         <td><para style="terp_default_Right_10"><b>[[ formatLang(sum_line(o.line_ids,'total'), dp='Account', currency_obj=o.currency_id) ]]</b></para></td>
       </tr>
     </blockTable>
-    <para style="terp_header">
+    <para style="terp_default_8">
       <font color="white"> </font>
     </para>
-    <para style="terp_default_Centre_9">Arrete la presente declaration a la somme de <b>[[o.voucher_id.amount_in_word ]]</b>, soit <b>[[ formatLang(sum_line(o.line_ids,'total'), dp='Account', currency_obj=o.currency_id) ]]</b></para>
-    <para style="terp_header">
-      <font color="white"> </font>
-    </para>
+      <para style="terp_default_Centre_9">Arrêté la présente déclaration à la somme de <b>[[o.voucher_id.amount_in_word ]]</b>, soit <b>[[ formatLang(sum_line(o.line_ids,'total'), dp='Account', currency_obj=o.currency_id) ]]</b></para>
   </story>
 </document>

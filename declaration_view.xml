@@ -131,6 +131,7 @@
                 <button name="compute_lines" states="draft" string="Compute" type="object" class="oe_highlight"/>
                 <button name="make_draft" states="confirmed" string="Cancel" type="object"/>
                 <button name="print_report" states="confirmed,paid" icon="gtk-print" string="Print" type="object" context="{'format': format}"/>
+                <button name="action_view_voucher" states="confirmed,paid" string="View Payment Voucher" type="object"/>
                 <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,paid" statusbar_colors='{"confirmed":"red"}'/>
               </header>
               <sheet> 
@@ -163,8 +164,6 @@
                         <field name="total"/>
                       </tree>
                     </field>
-                  </page>
-                  <page string="Employees to discard">
                   </page>
                 </notebook>                
               </sheet> 
