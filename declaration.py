@@ -199,26 +199,30 @@ class declaration_report(osv.osv):
                 if not m.get(line.rule_id.id):
                     m[line.rule_id.id] = {
                         'name': line.rule_id.name,
+                        'move_id': move_id,
                         'partner_id': declaration.prep_id.partner_id.id,
                         'account_id': line.account_id.id, 
                         'date_maturity': declaration.date_confirm, 
                         'debit':0.0,
+                        'credit':0.0,
+                        'quantity':1,
                         }
                 m[line.rule_id.id]['debit'] += line.total
+                amount += line.total
             # create the move lines
+            first_line = {
+                    'name': declaration.name,
+                    'move_id': move_id,
+                    'partner_id': declaration.prep_id.partner_id.id,
+                    'account_id': declaration.prep_id.account_id.id, 
+                    'date_maturity': declaration.date_confirm, 
+                    'credit': amount,
+                    'debit': 0.0,
+                    } #credit
+            first_line_id = move_line_obj.create(cr, uid, first_line)
+            # now balance it
             for o in m.keys():
-                lml.append(m[o]) # debit
-                lml.append({
-                        'name': m[o]['name'],
-                        'partner_id': declaration.prep_id.partner_id.id,
-                        'account_id': declaration.prep_id.account_id.id, 
-                        'date_maturity': declaration.date_confirm, 
-                        'credit': m[o]['debit'], 
-                        }) #credit
-            #convert eml into an osv-valid format
-            #~ print lml
-            lines = [(0,0,x) for x in lml]
-            move_obj.write(cr, uid, [move_id], {'line_id': lines}, context=context)
+                move_line_obj.create(cr, uid, m[o]) # debit
             # post the journal entry if 'Skip 'Draft' State for Manual Entries' is checked
             journal_id = move_obj.browse(cr, uid, move_id, context).journal_id
             if journal_id.entry_posted:
@@ -242,7 +246,7 @@ class declaration_report(osv.osv):
                 'partner_id': declaration.prep_id.partner_id.id,
                 'type':'payment',
                 'name': declaration.prep_id.name,
-                'account_id': declaration.prep_id.account_id.id,
+                'account_id': declaration.bank_id.journal_id.default_credit_account_id.id,
                 'amount': declaration.amount,
                 'date': declaration.date_confirm,
                 'date_due': declaration.date_confirm,
@@ -250,14 +254,15 @@ class declaration_report(osv.osv):
             # Define the voucher line
             lml = []
             for move_line_id in declaration.move_id.line_id:
-                lml.append({
-                    'name': move_line_id.name,
-                    'move_line_id': move_line_id.id,
-                    'reconcile': True,
-                    'amount': move_line_id.debit > 0 and move_line_id.debit or move_line_id.credit,
-                    'account_id': move_line_id.account_id.id,
-                    'type': move_line_id.credit and 'dr' or 'cr',
-                    })
+                if move_line_id.credit > 0:
+                    lml.append({
+                        'name': move_line_id.name,
+                        'move_line_id': move_line_id.id,
+                        'reconcile': True,
+                        'amount': move_line_id.credit,
+                        'account_id': declaration.prep_id.account_id.id,
+                        'type': move_line_id.credit and 'dr' or 'cr',
+                        })
             lines = [(0,0,x) for x in lml]
             voucher['line_ids'] = lines
             voucher_id = self.pool.get('account.voucher').create(
