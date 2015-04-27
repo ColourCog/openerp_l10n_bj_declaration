@@ -1,58 +1,685 @@
 # Translation of OpenERP Server.
 # This file contains the translation of the following modules:
-# 	* l10n_bj_payroll
+# 	* l10n_bj_declaration
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: OpenERP Server 7.0-20140804-231303\n"
+"Project-Id-Version: OpenERP Server 7.0-20150128\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-20 23:32+0000\n"
-"PO-Revision-Date: 2015-01-21 00:38+0100\n"
+"POT-Creation-Date: 2015-02-03 20:38+0000\n"
+"PO-Revision-Date: 2015-02-03 22:03+0100\n"
 "Last-Translator: Bidossessi Sodonon <bidossessi@linuxbenin.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 1.7.1\n"
+"Plural-Forms: \n"
 "Language: fr\n"
+"X-Generator: Poedit 1.7.3\n"
 
-#. module: l10n_bj_payroll
-#: field:hr.employee,cnss_number:0 field:res.company,cnss_number:0
-msgid "CNSS number"
-msgstr "Numéro CNSS"
+#. module: l10n_bj_declaration
+#: help:declaration.prep,journal_id:0
+msgid "The journal used to record declarations."
+msgstr "Le journal utilisé pour enregistrer les déclarations:"
 
-#. module: l10n_bj_payroll
-#: view:res.company:0
-msgid "Payroll"
-msgstr "Paie"
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0
+msgid "4. Net à Payer"
+msgstr "4. Net à Payer"
 
-#. module: l10n_bj_payroll
-#: model:ir.model,name:l10n_bj_payroll.model_res_company
-msgid "Companies"
-msgstr "Entreprises"
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.cnss:0
+#: report:declaration.ipts:0
+msgid "Net à Payer"
+msgstr "Net à Payer"
 
-#. module: l10n_bj_payroll
-#: field:hr.employee,ifu_number:0 field:res.company,ifu_number:0
-msgid "IFU number"
-msgstr "Numéro IFU"
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.ipts:0
+msgid "I - IDENTIFICATION"
+msgstr "I - IDENTIFICATION"
 
-#. module: l10n_bj_payroll
-#: field:res.company,insae_number:0
-msgid "INSAE number"
-msgstr "Numéro INSAE"
+#. module: l10n_bj_declaration
+#: field:res.company,other_name:0
+msgid "Other Name"
+msgstr "Autre dénomination"
 
-#. module: l10n_bj_payroll
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.cnss:0
+#: report:declaration.ipts:0
+msgid "Nom"
+msgstr "Nom"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.ipts:0
+msgid "Fax"
+msgstr "Fax"
+
+#. module: l10n_bj_declaration
+#: field:declaration.report,voucher_id:0
+msgid "Payment voucher"
+msgstr "Justificatif de Paiement"
+
+#. module: l10n_bj_declaration
+#: field:declaration.report,message_unread:0
+msgid "Unread Messages"
+msgstr "Messages non-lus"
+
+#. module: l10n_bj_declaration
+#: field:declaration.report,company_id:0
+msgid "Company"
+msgstr "Société"
+
+#. module: l10n_bj_declaration
+#: view:declaration.report:0
+msgid "Payroll Report"
+msgstr "Rapport de Paie"
+
+#. module: l10n_bj_declaration
+#: report:declaration.cnss:0
+msgid "No. CNSS"
+msgstr "No. CNSS"
+
+#. module: l10n_bj_declaration
+#: report:declaration.cnss:0
+msgid "Période:"
+msgstr "Période:"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0
+msgid "2. Montant brut des Salaires"
+msgstr "2. Montant brut des Salaires"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.ipts:0
+msgid "Salaires Brûts"
+msgstr "Salaires Brûts"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.ipts:0
+msgid "Nom et Prénom ou Raison Sociale"
+msgstr "Nom et Prénom ou Raison Sociale"
+
+#. module: l10n_bj_declaration
+#: field:declaration.report,message_ids:0
+msgid "Messages"
+msgstr "Messages"
+
+#. module: l10n_bj_declaration
+#: selection:declaration.report,state:0
+msgid "Transferred"
+msgstr "Transféré"
+
+#. module: l10n_bj_declaration
+#: report:declaration.ipts:0 selection:declaration.prep,format:0
+msgid "IPRR"
+msgstr "IPRR"
+
+#. module: l10n_bj_declaration
+#: report:declaration.ipts:0
+msgid "5. Totaux des lignes 3 et 4"
+msgstr "5. Totaux des lignes 3 et 4"
+
+#. module: l10n_bj_declaration
+#: field:declaration.report.line,total:0
+msgid "Amount"
+msgstr "Montant"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.ipts:0
+msgid "Tel"
+msgstr "Tel"
+
+#. module: l10n_bj_declaration
+#: help:declaration.report,message_unread:0
+msgid "If checked new messages require your attention."
+msgstr "Si coché nouveaux messages requièrent votre attention."
+
+#. module: l10n_bj_declaration
+#: code:addons/l10n_bj_declaration/declaration.py:284
+#, python-format
+msgid "Declaration Payment"
+msgstr "Paiement Déclaration"
+
+#. module: l10n_bj_declaration
+#: view:declaration.report:0
+msgid "View Payment Voucher"
+msgstr "Voir Justificatif de Paiement"
+
+#. module: l10n_bj_declaration
+#: help:declaration.report,message_summary:0
+msgid "Holds the Chatter summary (number of messages, ...). This summary is directly in html format in order to be inserted in kanban views."
+msgstr "Holds the Chatter summary (number of messages, ...). This summary is directly in html format in order to be inserted in kanban views."
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.cnss:0
+#: report:declaration.ipts:0
+msgid "Banque:"
+msgstr "Banque:"
+
+#. module: l10n_bj_declaration
+#: field:declaration.prep,partner_id:0
+msgid "Partner"
+msgstr "Partenaire"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.ipts:0
+msgid "No. INSAE:"
+msgstr "No. INSAE:"
+
+#. module: l10n_bj_declaration
+#: selection:declaration.report,state:0
+msgid "Confirmed"
+msgstr "Confirmé"
+
+#. module: l10n_bj_declaration
+#: model:ir.actions.act_window,name:l10n_bj_declaration.action_declaration_report_form
+#: model:ir.ui.menu,name:l10n_bj_declaration.declaration_menu_declaration_report
+msgid "Payroll Declaration"
+msgstr "Déclaration sur la Paie"
+
+#. module: l10n_bj_declaration
+#: selection:declaration.prep,format:0
+msgid "CNSS"
+msgstr "CNSS"
+
+#. module: l10n_bj_declaration
+#: view:declaration.report:0
+msgid "Confirm"
+msgstr "Confirmer"
+
+#. module: l10n_bj_declaration
+#: report:declaration.ipts:0
+msgid "3. Montant de l'IPRR"
+msgstr "3. Montant de l'IPRR"
+
+#. module: l10n_bj_declaration
+#: field:declaration.report,message_follower_ids:0
+msgid "Followers"
+msgstr "Followers"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.cnss:0
+#: report:declaration.ipts:0
+msgid "Date d'émission:"
+msgstr "Date d'émission:"
+
+#. module: l10n_bj_declaration
+#: field:declaration.report.line,employee_id:0
+#: model:ir.model,name:l10n_bj_declaration.model_hr_employee
+msgid "Employee"
+msgstr "Employé"
+
+#. module: l10n_bj_declaration
+#: report:declaration.cnss:0
+msgid "3,6%"
+msgstr "3,6%"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.ipts:0
+msgid "Email"
+msgstr "Email"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.ipts:0
+msgid "Montant"
+msgstr "Montant"
+
+#. module: l10n_bj_declaration
+#: code:addons/l10n_bj_declaration/declaration.py:178
+#, python-format
+msgid "No declaration journal found."
+msgstr "Pas de journal de déclarations trouvé."
+
+#. module: l10n_bj_declaration
+#: view:declaration.report:0 field:declaration.report,line_ids:0
+msgid "Payslip Lines"
+msgstr "Lignes de Fiche de Paie"
+
+#. module: l10n_bj_declaration
+#: selection:declaration.report,state:0
+msgid "Draft Payment"
+msgstr "Paiement Brouillon"
+
+#. module: l10n_bj_declaration
+#: model:ir.actions.report.xml,name:l10n_bj_declaration.declaration_report_ipts
+msgid "IPRR Report"
+msgstr "Rapport IRPP"
+
+#. module: l10n_bj_declaration
+#: report:declaration.cnss:0
+msgid "No. Employeur:"
+msgstr "No. Employeur:"
+
+#. module: l10n_bj_declaration
+#: view:declaration.report:0
+msgid "Share a message..."
+msgstr "Share a message..."
+
+#. module: l10n_bj_declaration
+#: field:declaration.report,prep_id:0
+msgid "Settings"
+msgstr "Configurations"
+
+#. module: l10n_bj_declaration
+#: view:declaration.report:0
+msgid "Declaration Report"
+msgstr "Déclaration"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.ipts:0
+msgid "1. Nombre de Salariés"
+msgstr "1. Nombre de Salariés"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.ipts:0
+msgid "III - PAIEMENT"
+msgstr "III - PAIEMENT"
+
+#. module: l10n_bj_declaration
+#: field:declaration.report,date_to:0
+msgid "Date To"
+msgstr "Jusqu'au"
+
+#. module: l10n_bj_declaration
+#: model:ir.model,name:l10n_bj_declaration.model_declaration_report
+msgid "Benin Payroll Declaration"
+msgstr "Déclarations sur la Paie Béninoise"
+
+#. module: l10n_bj_declaration
+#: field:declaration.prep,format:0
+msgid "Printout Format"
+msgstr "Format d'impression"
+
+#. module: l10n_bj_declaration
+#: field:declaration.report,currency_id:0
+msgid "Currency"
+msgstr "Monnaie"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0
+msgid "3. Montant des prélèvements"
+msgstr "3. Montant des prélèvements"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.cnss:0
+#: report:declaration.ipts:0
+msgid "No"
+msgstr "No"
+
+#. module: l10n_bj_declaration
 #: field:res.company,activity:0
 msgid "Activity"
 msgstr "Activité"
 
-#. module: l10n_bj_payroll
-#: model:ir.model,name:l10n_bj_payroll.model_hr_employee
-msgid "Employee"
-msgstr "Employé"
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.ipts:0
+msgid "Pénalité"
+msgstr "Pénalité"
 
-#. module: l10n_bj_payroll
-#: field:res.company,other_name:0
-msgid "Other Name"
-msgstr "Autre dénomination"
+#. module: l10n_bj_declaration
+#: selection:declaration.report,state:0
+msgid "Draft"
+msgstr "Draft"
+
+#. module: l10n_bj_declaration
+#: field:declaration.report,date_from:0
+msgid "Date From"
+msgstr "A partir du"
+
+#. module: l10n_bj_declaration
+#: model:ir.actions.act_window,help:l10n_bj_declaration.action_declaration_prep_form
+msgid ""
+"<p class=\"oe_view_nocontent_create\">\n"
+"              Click to create a new declaration setting. \n"
+"            </p><p>\n"
+"              Declaration settings list registers to consider when printing the declaration. \n"
+"              They also configure which printing format to use for the specific declaration\n"
+"            </p>\n"
+"          "
+msgstr ""
+"<p class=\"oe_view_nocontent_create\">\n"
+"              Cliquez pour créer une nouvelle configuration de déclaration. \n"
+"            </p><p>\n"
+"               Les configurations de déclaration listent les registres à considérer pour l'impression des déclarations. \n"
+"              Elles définissent aussi le format d'impression à utiliser pour chaque type de déclaration:\n"
+"            </p>\n"
+"          "
+
+#. module: l10n_bj_declaration
+#: field:declaration.report,state:0
+msgid "Status"
+msgstr "Etat"
+
+#. module: l10n_bj_declaration
+#: report:declaration.ipts:0
+msgid "II - LIQUIDATION DES IMPOTS SUR SALAIRE"
+msgstr "II - LIQUIDATION DES IMPOTS SUR SALAIRE"
+
+#. module: l10n_bj_declaration
+#: model:ir.model,name:l10n_bj_declaration.model_declaration_report_line
+msgid "declaration.report.line"
+msgstr "declaration.report.line"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0
+msgid "II - LIQUIDATION DES DROITS"
+msgstr "II - LIQUIDATION DES DROITS"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.ipts:0
+msgid "No. IFU:"
+msgstr "No. IFU:"
+
+#. module: l10n_bj_declaration
+#: selection:declaration.report,state:0
+msgid "Paid"
+msgstr "Payé"
+
+#. module: l10n_bj_declaration
+#: code:addons/l10n_bj_declaration/declaration.py:322
+#: help:declaration.prep,partner_id:0
+#, python-format
+msgid "Who we are paying"
+msgstr "Qui nous payons"
+
+#. module: l10n_bj_declaration
+#: field:declaration.report,message_is_follower:0
+msgid "Is a Follower"
+msgstr "Is a Follower"
+
+#. module: l10n_bj_declaration
+#: field:declaration.report,user_id:0
+msgid "User"
+msgstr "User"
+
+#. module: l10n_bj_declaration
+#: field:declaration.report.line,declaration_id:0
+msgid "Declaration"
+msgstr "Déclaration"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.ipts:0
+msgid "Autre Dénomination"
+msgstr "Autre Dénomination"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.cnss:0
+#: report:declaration.ipts:0
+msgid "Payé le:"
+msgstr "Payé le:"
+
+#. module: l10n_bj_declaration
+#: view:declaration.prep:0 view:declaration.report:0
+#: model:ir.actions.act_window,name:l10n_bj_declaration.action_declaration_prep_form
+#: model:ir.ui.menu,name:l10n_bj_declaration.hr_menu_declaration_prep
+msgid "Declaration Settings"
+msgstr "Configurations de Déclaration"
+
+#. module: l10n_bj_declaration
+#: field:declaration.report,amount:0
+msgid "Amount due"
+msgstr "Montant dû"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.cnss:0
+#: report:declaration.ipts:0
+msgid "Arrêté la présente déclaration à la somme de"
+msgstr "Arrêté la présente déclaration à la somme de"
+
+#. module: l10n_bj_declaration
+#: view:declaration.report:0
+msgid "Compute"
+msgstr "Calculer"
+
+#. module: l10n_bj_declaration
+#: model:ir.model,name:l10n_bj_declaration.model_res_company
+msgid "Companies"
+msgstr "Sociétés"
+
+#. module: l10n_bj_declaration
+#: field:declaration.report.line,rule_id:0
+msgid "Rule"
+msgstr "Règle Salariale"
+
+#. module: l10n_bj_declaration
+#: field:declaration.report,message_summary:0
+msgid "Summary"
+msgstr "Résumé"
+
+#. module: l10n_bj_declaration
+#: report:declaration.ipts:0
+msgid "2. Montant brût des Salaires"
+msgstr "2. Montant brût des Salaires"
+
+#. module: l10n_bj_declaration
+#: field:declaration.report,date_confirm:0
+msgid "Date"
+msgstr "Date"
+
+#. module: l10n_bj_declaration
+#: field:declaration.report.line,account_id:0
+msgid "Debit Account"
+msgstr "Compte de débit"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.ipts:0
+msgid "Adresse (siège)"
+msgstr "Adresse (siège)"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.ipts:0
+msgid "Motif"
+msgstr "Motif"
+
+#. module: l10n_bj_declaration
+#: model:ir.model,name:l10n_bj_declaration.model_account_voucher
+msgid "Accounting Voucher"
+msgstr "Justificatif Comptable"
+
+#. module: l10n_bj_declaration
+#: field:declaration.prep,account_id:0
+msgid "Credit Account"
+msgstr "Compte de Crédit"
+
+#. module: l10n_bj_declaration
+#: code:addons/l10n_bj_declaration/declaration.py:332
+#: help:declaration.prep,format:0
+#, python-format
+msgid "Select the format to use when printing this type of declaration"
+msgstr "Choisir le format à utiliser pour imprimer ce type de déclaration"
+
+#. module: l10n_bj_declaration
+#: model:ir.model,name:l10n_bj_declaration.model_declaration_prep
+msgid "Benin Payroll Declaration Settings"
+msgstr "Configuration de Déclaration d'impots sur Salaire Béninois"
+
+#. module: l10n_bj_declaration
+#: view:declaration.report:0
+msgid "Cancel"
+msgstr "Annuler"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.ipts:0
+msgid "No. de quittance"
+msgstr "No. de quittance"
+
+#. module: l10n_bj_declaration
+#: field:declaration.report.line,gross:0
+msgid "Gross"
+msgstr "Brût"
+
+#. module: l10n_bj_declaration
+#: field:declaration.report,format:0
+msgid "Printout format"
+msgstr "Format d'impression"
+
+#. module: l10n_bj_declaration
+#: model:ir.actions.report.xml,name:l10n_bj_declaration.declaration_report_cnss
+msgid "CNSS Report"
+msgstr "Rapport CNSS"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.cnss:0
+#: report:declaration.ipts:0
+msgid "Brut"
+msgstr "Brut"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.cnss:0
+#: report:declaration.ipts:0
+msgid "Chèque No:"
+msgstr "Chèque No:"
+
+#. module: l10n_bj_declaration
+#: model:ir.model,name:l10n_bj_declaration.model_hr_contribution_register
+msgid "Contribution Register"
+msgstr "Registre de contribution"
+
+#. module: l10n_bj_declaration
+#: view:declaration.report:0
+msgid "Print"
+msgstr "Print"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.ipts:0
+msgid "Déclaration du mois de"
+msgstr "Déclaration du mois de"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 selection:declaration.prep,format:0
+msgid "AIB"
+msgstr "AIB"
+
+#. module: l10n_bj_declaration
+#: field:declaration.report,move_id:0
+msgid "Transfer to Supplier Account"
+msgstr "Transféré au compte Fournisseur"
+
+#. module: l10n_bj_declaration
+#: code:addons/l10n_bj_declaration/declaration.py:339
+#: help:declaration.prep,register_ids:0
+#, python-format
+msgid "The registers where concerned payslip lines are kept"
+msgstr "Les registres où sont stockées les lignes de fiche de paie concernées"
+
+#. module: l10n_bj_declaration
+#: field:declaration.prep,journal_id:0
+msgid "Journal"
+msgstr "Journal"
+
+#. module: l10n_bj_declaration
+#: view:res.company:0
+msgid "Payroll"
+msgstr "Paie"
+
+#. module: l10n_bj_declaration
+#: field:declaration.prep,register_ids:0
+msgid "Associated registers"
+msgstr "Registres Associés"
+
+#. module: l10n_bj_declaration
+#: field:declaration.prep,name:0 field:declaration.report,name:0
+#: field:declaration.report.line,name:0
+msgid "Name"
+msgstr "Nom"
+
+#. module: l10n_bj_declaration
+#: field:declaration.report,bank_id:0
+msgid "Payment Bank"
+msgstr "Banque de Paiement"
+
+#. module: l10n_bj_declaration
+#: model:ir.actions.client,name:l10n_bj_declaration.action_client_declaration_menu
+msgid "Open Declaration Menu"
+msgstr "Ouvrir le Menu Déclaration"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.ipts:0
+msgid "Activité"
+msgstr "Activité"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.ipts:0
+msgid "Cadre Réservé à l'administration"
+msgstr "Cadre Réservé à l'administration"
+
+#. module: l10n_bj_declaration
+#: field:declaration.report,partner_id:0
+msgid "Due to"
+msgstr "Dû à"
+
+#. module: l10n_bj_declaration
+#: view:declaration.prep:0
+msgid "Declaration Setting"
+msgstr "Configuration de Déclaration"
+
+#. module: l10n_bj_declaration
+#: help:declaration.report,message_ids:0
+msgid "Messages and communication history"
+msgstr "Messages and communication history"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.ipts:0
+msgid "Montant total"
+msgstr "Montant total"
+
+#. module: l10n_bj_declaration
+#: report:declaration.ipts:0
+msgid "4. Montant du VPS"
+msgstr "4. Montant du VPS"
+
+#. module: l10n_bj_declaration
+#: field:hr.contribution.register,prep_ids:0
+msgid "Associated Declaration Settings"
+msgstr "Configuration de Déclaration Associées"
+
+#. module: l10n_bj_declaration
+#: code:addons/l10n_bj_declaration/declaration.py:324
+#: help:declaration.prep,account_id:0
+#, python-format
+msgid "The payable account to use"
+msgstr "Le compte payable à utiliser"
+
+#. module: l10n_bj_declaration
+#: report:declaration.ipts:0
+msgid "VPS"
+msgstr "VPS"
+
+#. module: l10n_bj_declaration
+#: code:addons/l10n_bj_declaration/declaration.py:178
+#, python-format
+msgid "Error!"
+msgstr "Erreur!"
+
+#. module: l10n_bj_declaration
+#: model:ir.actions.act_window,help:l10n_bj_declaration.action_declaration_report_form
+msgid ""
+"<p class=\"oe_view_nocontent_create\">\n"
+"              Click to create a new declaration report. \n"
+"            </p><p>\n"
+"              Declaration reports prepare accounting entries and summary for a specific period.\n"
+"            </p>\n"
+"          "
+msgstr ""
+"<p class=\"oe_view_nocontent_create\">\n"
+"              Cliquez pour créer une nouvelle Déclaration. \n"
+"            </p><p>\n"
+"              Les Déclarations préparent les entrées comptables et les rapports officiels pour une période donnée.\n"
+"            </p>\n"
+"          "
+
+#. module: l10n_bj_declaration
+#: model:ir.actions.report.xml,name:l10n_bj_declaration.declaration_report_aib
+msgid "AIB Report"
+msgstr "Rapport AIB"
+
+#. module: l10n_bj_declaration
+#: view:declaration.prep:0
+msgid "Registers"
+msgstr "Registres"
+
+#. module: l10n_bj_declaration
+#: report:declaration.aib:0 report:declaration.cnss:0
+#: report:declaration.ipts:0
+msgid "Total"
+msgstr "Total"

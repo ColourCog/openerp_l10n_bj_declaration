@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<document filename="Invoices.pdf">
-  <template title="Invoices" author="OpenERP S.A.(sales@openerp.com)" allowSplitting="20">
+<document filename="AIB_report.pdf">
+  <template title="AIB Report" author="OpenERP S.A.(sales@openerp.com)" allowSplitting="20">
     <pageTemplate id="first">
       <frame id="first" x1="34.0" y1="28.0" width="530" height="786"/>
     </pageTemplate>
@@ -140,7 +140,7 @@
   <story>
   
     <para style="terp_default_8">[[ repeatIn(objects,'o') ]]</para>
-    <para style="terp_default_8">[[ setLang(o.partner_id.lang) ]]</para>
+    <para style="terp_default_8">[[ setLang(o.prep_id.partner_id.lang) ]]</para>
     <!-- Document header-->
     <blockTable colWidths="265.0,265.0" style="Table1">
       <tr>

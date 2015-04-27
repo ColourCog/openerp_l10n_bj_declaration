@@ -1,4 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_declaration_report_line,access_declaration_report_line,model_declaration_report_line,,1,1,1,1
-access_declaration_report,access_declaration_report,model_declaration_report,,1,1,1,1
-access_declaration_prep,access_declaration_prep,model_declaration_prep,,1,1,1,1
+access_declaration_report_line,access_declaration_report_line,model_declaration_report_line,account.group_account_user,1,1,1,1
+access_declaration_report,access_declaration_report,model_declaration_report,account.group_account_user,1,1,1,1
+access_declaration_prep,access_declaration_prep,model_declaration_prep,account.group_account_user,1,1,1,1

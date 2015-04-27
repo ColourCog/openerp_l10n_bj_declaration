@@ -265,9 +265,12 @@ class declaration_report(osv.osv):
                         })
             lines = [(0,0,x) for x in lml]
             voucher['line_ids'] = lines
-            voucher_id = self.pool.get('account.voucher').create(
-                cr, uid, voucher, context=context)
+            voucher_id = voucher_obj.create(cr, uid, voucher, context=context)
             self.write(cr, uid, [declaration.id], {'voucher_id': voucher_id}, context=context)
+            move_id = voucher_obj.browse(cr, uid, voucher_id, context=context).move_id.id
+            # post the journal entry if 'Skip 'Draft' State for Manual Entries' is checked
+            if declaration.bank_id.journal_id.entry_posted:
+                move_obj.button_validate(cr, uid, [move_id], context)
                 
     def action_view_voucher(self, cr, uid, ids, context=None):
         '''
@@ -325,7 +328,7 @@ class declaration_prep(osv.osv):
         'journal_id': fields.many2one('account.journal', 'Journal', required=True, help = "The journal used to record declarations."),
         'format': fields.selection([
                 ('cnss', 'CNSS'),
-                ('ipts', 'IPTS'),
+                ('ipts', 'IPRR'),
                 ('aib', 'AIB'),
                 ],
                 'Printout Format',
