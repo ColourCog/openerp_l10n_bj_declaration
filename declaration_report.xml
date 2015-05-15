@@ -19,7 +19,7 @@
             model="declaration.report"
             name="declaration.ipts"
             rml="l10n_bj_declaration/report/declaration_report_ipts.rml"
-            string="IPRR Report" 
+            string="IRPP Report" 
             usage="default"
             attachment_use="False"
             />

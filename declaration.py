@@ -156,7 +156,7 @@ class declaration_report(osv.osv):
     def condition_paid(self, cr, uid, ids, context=None):
         ok = True
         for l in self.browse(cr, uid, ids, context=context):
-            if l.voucher_id.state == 'posted':
+            if l.voucher_id.state != 'posted':
                 ok = False
         return ok
 
@@ -328,7 +328,7 @@ class declaration_prep(osv.osv):
         'journal_id': fields.many2one('account.journal', 'Journal', required=True, help = "The journal used to record declarations."),
         'format': fields.selection([
                 ('cnss', 'CNSS'),
-                ('ipts', 'IPRR'),
+                ('ipts', 'IRPP'),
                 ('aib', 'AIB'),
                 ],
                 'Printout Format',

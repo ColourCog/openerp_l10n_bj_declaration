@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<document filename="IPRR_report.pdf">
-  <template title="IPRR Report" author="OpenERP S.A.(sales@openerp.com)" allowSplitting="20">
+<document filename="IRPP_report.pdf">
+  <template title="IRPP Report" author="OpenERP S.A.(sales@openerp.com)" allowSplitting="20">
     <pageTemplate id="first">
       <frame id="first" x1="34.0" y1="28.0" width="530" height="786"/>
     </pageTemplate>
@@ -205,15 +205,15 @@
     <blockTable colWidths="335.0,200.0" style="Table_Invoice_General_Header">
       <tr>
         <td><para style="terp_default_9">1. Nombre de Salariés</para></td>
-        <td><para style="terp_default_Right_9">[[ len(subset(o.line_ids, 'IPRRREG')) ]]</para></td>
+        <td><para style="terp_default_Right_9">[[ len(subset(o.line_ids, 'IRPPREG')) ]]</para></td>
       </tr>
       <tr>
         <td><para style="terp_default_9">2. Montant brût des Salaires</para></td>
-        <td><para style="terp_default_Right_9">[[ formatLang(sum_line(subset(o.line_ids, 'IPRRREG'),'gross'), dp='Account', currency_obj=o.currency_id) ]]</para></td>
+        <td><para style="terp_default_Right_9">[[ formatLang(sum_line(subset(o.line_ids, 'IRPPREG'),'gross'), dp='Account', currency_obj=o.currency_id) ]]</para></td>
       </tr>
       <tr>
-        <td><para style="terp_default_9">3. Montant de l'IPRR</para></td>
-        <td><para style="terp_default_Right_9">[[ formatLang(sum_line(subset(o.line_ids, 'IPRRREG'),'total'), dp='Account', currency_obj=o.currency_id) ]]</para></td>
+        <td><para style="terp_default_9">3. Montant de l'IRPP</para></td>
+        <td><para style="terp_default_Right_9">[[ formatLang(sum_line(subset(o.line_ids, 'IRPPREG'),'total'), dp='Account', currency_obj=o.currency_id) ]]</para></td>
       </tr>
       <tr>
         <td><para style="terp_default_9">4. Montant du VPS</para></td>
@@ -266,7 +266,7 @@
           </blockTable>
           <blockTable colWidths="100,100,100" style="Table_General_Detail_Content">
             <tr>
-              <td><para style="terp_default_9">IPRR</para></td>
+              <td><para style="terp_default_9">IRPP</para></td>
               <td><para style="terp_default_9"></para></td>
               <td><para style="terp_default_9"></para></td>
             </tr>
@@ -315,12 +315,12 @@
         <td><para style="terp_tblheader_General"><b>No</b></para></td>
         <td><para style="terp_tblheader_General"><b>Nom</b></para></td>
         <td><para style="terp_tblheader_General_Right"><b>Brut</b></para></td>
-        <td><para style="terp_tblheader_General_Right"><b>IPRR</b></para></td>
+        <td><para style="terp_tblheader_General_Right"><b>IRPP</b></para></td>
         <td><para style="terp_tblheader_General_Right"><b>VPS</b></para></td>
       </tr>
     </blockTable>
     <section>
-      <para style="terp_default_2">[[ repeatIn(merge(o.line_ids, 'IPRRREG', 'VPSREG'),'l') ]]</para>
+      <para style="terp_default_2">[[ repeatIn(merge(o.line_ids, 'IRPPREG', 'VPSREG'),'l') ]]</para>
       <blockTable colWidths="30.0,165,120,110,110" style="Table8">
         <tr>
           <td><para style="terp_default_9">[[ l[2] ]]</para></td>
@@ -335,8 +335,8 @@
       <tr>
         <td><para style="terp_default_9"></para></td>
         <td><para style="terp_default_9"><b>Total</b></para></td>
-        <td><para style="terp_default_Right_10"><b>[[ formatLang(sum_line(subset(o.line_ids, 'IPRRREG'),'gross'), dp='Account', currency_obj=o.currency_id) ]]</b></para></td>
-        <td><para style="terp_default_Right_10"><b>[[ formatLang(sum_line(subset(o.line_ids, 'IPRRREG'),'total'), dp='Account', currency_obj=o.currency_id) ]]</b></para></td>
+        <td><para style="terp_default_Right_10"><b>[[ formatLang(sum_line(subset(o.line_ids, 'IRPPREG'),'gross'), dp='Account', currency_obj=o.currency_id) ]]</b></para></td>
+        <td><para style="terp_default_Right_10"><b>[[ formatLang(sum_line(subset(o.line_ids, 'IRPPREG'),'total'), dp='Account', currency_obj=o.currency_id) ]]</b></para></td>
         <td><para style="terp_default_Right_10"><b>[[ formatLang(sum_line(subset(o.line_ids, 'VPSREG'),'total'), dp='Account', currency_obj=o.currency_id) ]]</b></para></td>
       </tr>
       <tr>
@@ -354,7 +354,7 @@
       <td><para style="terp_default_9"></para></td>
       <td><para style="terp_default_9"><i>Salaires Brûts</i></para></td>
       <td><para style="terp_default_Right_9"></para></td>
-      <td><para style="terp_default_Right_9">[[ formatLang(sum_line(subset(o.line_ids, 'IPRRREG'),'gross'), dp='Account', currency_obj=o.currency_id) ]]</para></td>
+      <td><para style="terp_default_Right_9">[[ formatLang(sum_line(subset(o.line_ids, 'IRPPREG'),'gross'), dp='Account', currency_obj=o.currency_id) ]]</para></td>
     </tr>
   </blockTable>
   <section>
