@@ -138,7 +138,7 @@
     <images/>
   </stylesheet>
   <story>
-  
+
     <para style="terp_default_8">[[ repeatIn(objects,'o') ]]</para>
     <para style="terp_default_8">[[ setLang(o.prep_id.partner_id.lang) ]]</para>
     <!-- Document header-->

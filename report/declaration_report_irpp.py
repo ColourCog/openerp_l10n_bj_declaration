@@ -23,9 +23,9 @@ import time
 from datetime import datetime
 from openerp.report import report_sxw
 
-class declaration_report_ipts(report_sxw.rml_parse):
+class declaration_report_irpp(report_sxw.rml_parse):
     def __init__(self, cr, uid, name, context=None):
-        super(declaration_report_ipts, self).__init__(cr, uid, name, context=context)
+        super(declaration_report_irpp, self).__init__(cr, uid, name, context=context)
         self.localcontext.update({
             'time': time,
             'subset': self._get_rule_subset,
@@ -61,10 +61,10 @@ class declaration_report_ipts(report_sxw.rml_parse):
         return res.items()    
 
 report_sxw.report_sxw(
-    'report.declaration.ipts', 
+    'report.declaration.irpp', 
     'declaration.report', 
-    'addons/l10n_bj_declaration/report/declaration_report_ipts.rml', 
-    parser=declaration_report_ipts, 
+    'addons/l10n_bj_declaration/report/declaration_report_irpp.rml', 
+    parser=declaration_report_irpp, 
     header="external")
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

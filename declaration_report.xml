@@ -15,10 +15,10 @@
 
         <report 
             auto="False"
-            id="declaration_report_ipts"
+            id="declaration_report_irpp"
             model="declaration.report"
-            name="declaration.ipts"
-            rml="l10n_bj_declaration/report/declaration_report_ipts.rml"
+            name="declaration.irpp"
+            rml="l10n_bj_declaration/report/declaration_report_irpp.rml"
             string="IRPP Report" 
             usage="default"
             attachment_use="False"

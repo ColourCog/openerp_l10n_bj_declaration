@@ -11,13 +11,13 @@ class declaration_report_line(osv.osv):
     _order = "name"
     _columns = {
         'declaration_id': fields.many2one('declaration.report', 'Declaration', ondelete='cascade'),
-        'name' : fields.char('Name', size=256, select=True, readonly=True), 
-        'employee_id' : fields.many2one('hr.employee', 'Employee'), 
-        'rule_id' : fields.many2one('hr.salary.rule', 'Rule'),  
+        'name' : fields.char('Name', size=256, select=True, readonly=True),
+        'employee_id' : fields.many2one('hr.employee', 'Employee'),
+        'rule_id' : fields.many2one('hr.salary.rule', 'Rule'),
         'account_id': fields.many2one('account.account', 'Debit Account'),
-        'gross' : fields.float('Gross', digits_compute=dp.get_precision('Account')), 
-        'total' : fields.float('Amount', digits_compute=dp.get_precision('Account')), 
-        
+        'gross' : fields.float('Gross', digits_compute=dp.get_precision('Account')),
+        'total' : fields.float('Amount', digits_compute=dp.get_precision('Account')),
+
     }
 
 declaration_report_line()
@@ -25,8 +25,8 @@ declaration_report_line()
 
 class declaration_report(osv.osv):
     _name = 'declaration.report'
-    _inherit = ['mail.thread', 'ir.needaction_mixin'] 
-    _description = 'Benin Payroll Declaration' 
+    _inherit = ['mail.thread', 'ir.needaction_mixin']
+    _description = 'Benin Payroll Declaration'
     _track = {
         'state': {
           'declaration_report.mt_declaration_confirmed': lambda self, cr, uid, obj, ctx=None: obj['state'] == 'confirmed',
@@ -41,7 +41,7 @@ class declaration_report(osv.osv):
         return currency_ids[0]
 
     _columns = {
-        'name' : fields.char('Name', size=64, select=True, readonly=True), 
+        'name' : fields.char('Name', size=64, select=True, readonly=True),
         'partner_id': fields.related('prep_id', 'partner_id', type='many2one', string='Due to', relation='res.partner', readonly=True),
         'prep_id': fields.many2one('declaration.prep', 'Settings', required=True),
         'bank_id': fields.many2one('res.partner.bank', 'Payment Bank', required=True),
@@ -49,10 +49,10 @@ class declaration_report(osv.osv):
         'format': fields.related('prep_id', 'format', type='char', string='Printout format', relation='declaration.prep', readonly=True),
         'move_id': fields.many2one('account.move', 'Transfer to Supplier Account', readonly=True),
         'voucher_id': fields.many2one('account.voucher', 'Payment voucher', readonly=True),
-        'amount' : fields.float('Amount due', digits_compute=dp.get_precision('Account'), readonly=True), 
+        'amount' : fields.float('Amount due', digits_compute=dp.get_precision('Account'), readonly=True),
         'date_from': fields.date('Date From', required=True),
         'date_to': fields.date('Date To', required=True),
-        'date_confirm' : fields.date('Date', select=True), 
+        'date_confirm' : fields.date('Date', select=True),
         'company_id': fields.many2one('res.company', 'Company', required=True),
         'currency_id': fields.many2one('res.currency', 'Currency', required=True),
         'user_id': fields.many2one('res.users', 'User', required=True),
@@ -101,7 +101,7 @@ class declaration_report(osv.osv):
                         "AND hp.state = 'done' "\
                         "ORDER BY pl.slip_id, pl.sequence",
                         (declaration.date_from, declaration.date_to))
-            gross_map = {x[0]:x[1] for x in cr.fetchall()}            
+            gross_map = {x[0]:x[1] for x in cr.fetchall()}
             # clean existing report_line:
             old_line_ids = report_line_obj.search(cr, uid, [('declaration_id', '=', declaration.id)], context=context)
 #            old_slipline_ids
@@ -130,13 +130,13 @@ class declaration_report(osv.osv):
             lines = [(0,0,line) for line in res]
             self.write(cr, uid, [declaration.id], {'line_ids': lines, 'amount':total,}, context=context)
         return True
-    
+
     def confirm_report(self, cr, uid, ids, context=None):
         self.write(cr, uid, ids, {'date_confirm': time.strftime('%Y-%m-%d')}, context=context)
         self._receipt_create(cr, uid, ids, context)
         self._voucher_create(cr, uid, ids, context)
         return self.write(cr, uid, ids, {'state': 'confirmed', 'date_confirm': time.strftime('%Y-%m-%d')}, context=context)
-    
+
     def make_draft(self, cr, uid, ids, context=None):
         '''Remove any unpaid voucher and move created and reset to draft'''
         move_obj = self.pool.get('account.move')
@@ -187,10 +187,10 @@ class declaration_report(osv.osv):
         for declaration in self.browse(cr, uid, ids, context=context):
             if declaration.move_id:
                 continue
-            
+
             #create the move that will contain the accounting entries
             move_id = move_obj.create(cr, uid, self._move_get(cr, uid, declaration.id, context=context), context=context)
-        
+
             lml = []
             amount = 0.0
             # compact debit lines
@@ -201,8 +201,8 @@ class declaration_report(osv.osv):
                         'name': line.rule_id.name,
                         'move_id': move_id,
                         'partner_id': declaration.prep_id.partner_id.id,
-                        'account_id': line.account_id.id, 
-                        'date_maturity': declaration.date_confirm, 
+                        'account_id': line.account_id.id,
+                        'date_maturity': declaration.date_confirm,
                         'debit':0.0,
                         'credit':0.0,
                         'quantity':1,
@@ -214,8 +214,8 @@ class declaration_report(osv.osv):
                     'name': declaration.name,
                     'move_id': move_id,
                     'partner_id': declaration.prep_id.partner_id.id,
-                    'account_id': declaration.prep_id.account_id.id, 
-                    'date_maturity': declaration.date_confirm, 
+                    'account_id': declaration.prep_id.account_id.id,
+                    'date_maturity': declaration.date_confirm,
                     'credit': amount,
                     'debit': 0.0,
                     } #credit
@@ -232,9 +232,12 @@ class declaration_report(osv.osv):
         return return_ids
 
     def _voucher_create(self, cr, uid, ids, context=None):
+        ctx = context.copy()
+        ctx.update({'account_period_prefer_normal': True})
         voucher_obj = self.pool.get('account.voucher')
         move_line_obj = self.pool.get('account.move.line')
         journal_obj = self.pool.get('account.journal')
+        period_obj = self.pool.get('account.period')
         for declaration in self.browse(cr, uid, ids, context=context):
             if declaration.voucher_id:
                 continue
@@ -250,6 +253,11 @@ class declaration_report(osv.osv):
                 'amount': declaration.amount,
                 'date': declaration.date_confirm,
                 'date_due': declaration.date_confirm,
+                'period_id': period_obj.find(
+                    cr,
+                    uid,
+                    inv.date_confirm,
+                    context=ctx)[0],
                 }
             # Define the voucher line
             lml = []
@@ -271,7 +279,7 @@ class declaration_report(osv.osv):
             # post the journal entry if 'Skip 'Draft' State for Manual Entries' is checked
             if declaration.bank_id.journal_id.entry_posted:
                 move_obj.button_validate(cr, uid, [move_id], context)
-                
+
     def action_view_voucher(self, cr, uid, ids, context=None):
         '''
         This function returns an action that display existing account.move of given loan ids.
@@ -299,11 +307,11 @@ class declaration_report(osv.osv):
     def print_report(self, cr, uid, ids, context=None):
         report_map = {
             'cnss': 'declaration.cnss',
-            'ipts': 'declaration.ipts',
+            'irpp': 'declaration.irpp',
             'aib': 'declaration.aib',
         }
         return {
-            'type': 'ir.actions.report.xml', 
+            'type': 'ir.actions.report.xml',
             'report_name': report_map.get(context.get('format')),
             'datas': {
                     'model':'declaration.report',
@@ -318,17 +326,17 @@ declaration_report()
 
 class declaration_prep(osv.osv):
     _name = 'declaration.prep'
-    _description = 'Benin Payroll Declaration Settings' 
+    _description = 'Benin Payroll Declaration Settings'
 
     _columns = {
         "name": fields.char('Name', size=256, required=True),
         'partner_id':fields.many2one('res.partner', 'Partner', required=True, help=_("Who we are paying")),
-        'account_id': fields.many2one('account.account', 'Credit Account', required=True, 
+        'account_id': fields.many2one('account.account', 'Credit Account', required=True,
             domain="[('type', '=', 'payable')]", help=_("The payable account to use")),
         'journal_id': fields.many2one('account.journal', 'Journal', required=True, help = "The journal used to record declarations."),
         'format': fields.selection([
                 ('cnss', 'CNSS'),
-                ('ipts', 'IRPP'),
+                ('irpp', 'IRPP'),
                 ('aib', 'AIB'),
                 ],
                 'Printout Format',
