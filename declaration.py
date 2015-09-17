@@ -353,6 +353,7 @@ class declaration_prep(osv.osv):
     }
 declaration_prep()
 
+
 class contrib_register(osv.osv):
 
     _inherit = 'hr.contribution.register'
