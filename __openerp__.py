@@ -10,7 +10,7 @@
         'hr_payroll_account',
         'account_check_writing',
     ],
-    'version': '1.1',
+    'version': '1.3',
     'description': """
 Benin Payroll declarations.
 ===========================
