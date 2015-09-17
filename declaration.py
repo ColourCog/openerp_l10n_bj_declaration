@@ -181,6 +181,8 @@ class declaration_report(osv.osv):
 
     def _receipt_create(self, cr, uid, ids, context=None):
         """Create accounting entries for this declaration"""
+        # TODO: reconcile source move.lines with the new one
+        
         move_obj = self.pool.get('account.move')
         move_line_obj = self.pool.get('account.move.line')
         return_ids = []
@@ -256,7 +258,7 @@ class declaration_report(osv.osv):
                 'period_id': period_obj.find(
                     cr,
                     uid,
-                    inv.date_confirm,
+                    declaration.date_confirm,
                     context=ctx)[0],
                 }
             # Define the voucher line
