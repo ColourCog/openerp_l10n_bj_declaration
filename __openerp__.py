@@ -1,4 +1,4 @@
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 {
     'name': 'Benin - Payroll declarations',
     'category': 'Accounting',
@@ -10,14 +10,14 @@
         'hr_payroll_account',
         'account_check_writing',
     ],
-    'version': '1.3',
+    'version': '1.4',
     'description': """
 Benin Payroll declarations.
 ===========================
-This module enables a company to generate, store and print 
+This module enables a company to generate, store and print
 Benin Payroll declarations.
     """,
-    'data':[
+    'data': [
         "security/declaration_security.xml",
         "security/ir.model.access.csv",
         'declaration_view.xml',

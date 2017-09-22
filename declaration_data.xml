@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data noupdate="0">
+          <!-- This really belongs in l10n_bj_payroll, but... -->
+
+    <record id="l10n_bj_payroll.hr_payroll_rules_aib_rule" model="hr.salary.rule">
+        <field name="category_id" ref="l10n_bj_payroll.hr_payroll_category_aib"/>
+        <field name="name">AIB</field>
+        <field name="code">AIB</field>
+        <field name="sequence">130</field>
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">
+if employee.ifu_number:
+    result = categories.GROSS * -0.01
+else:
+    result = categories.GROSS * -0.05
+        </field>
+    </record>
+
     </data>
 </openerp>
 
